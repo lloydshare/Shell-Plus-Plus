@@ -1,0 +1,70 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Consolas;}}
+{\colortbl ;\red0\green255\blue0;\red0\green255\blue255;\red255\green255\blue255;\red0\green139\blue139;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\cf1\f0\fs18 Lloyd@DESKTOP-7RTQMFJ:\cf2 ~\cf3  $ ls\par
+\par
+Attributes          Owner               Last Write                    Size                Directory/File Name\par
+----------          -----               ----------                    ----                -------------------               \par
+\cf4\par
+d-------            Lloyd               10/1/2025 12:04:18 AM                             .cache\par
+d-------            Lloyd               3/22/2026 8:49:25 PM                              .continue\par
+d-------            Administrators      11/28/2025 11:41:23 AM                            .dbus-keyrings\par
+d-------            Lloyd               9/23/2025 9:49:16 AM                              .dnx\par
+d-------            SYSTEM              3/21/2026 5:08:12 PM                              .dotnet\par
+d-------            Lloyd               3/19/2026 7:43:37 AM                              .lmstudio\par
+d-------            Lloyd               10/31/2025 9:05:31 PM                             .nuget\par
+d-------            Lloyd               10/1/2025 2:59:22 AM                              .swt\par
+d-------            Administrators      9/24/2025 2:32:49 PM                              .templateengine\par
+d-------            Lloyd               3/21/2026 3:53:00 PM                              .vscode\par
+d-------            Lloyd               10/1/2025 3:06:26 AM                              .zenmap\par
+rd------            Lloyd               10/2/2022 11:54:51 AM                             3D Objects\par
+hd------            Lloyd               10/2/2022 11:53:08 AM                             AppData\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             Application Data\par
+rd------            Lloyd               10/2/2022 11:54:51 AM                             Contacts\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             Cookies\par
+rd------            Lloyd               3/21/2026 6:31:23 PM                              Desktop\par
+rd------            Lloyd               3/21/2026 3:21:15 PM                              Documents\par
+rd------            Lloyd               3/21/2026 3:49:57 PM                              Downloads\par
+rd------            Lloyd               10/2/2022 11:54:51 AM                             Favorites\par
+hsd-----            Lloyd               3/22/2026 4:15:17 PM                              IntelGraphicsProfiles\par
+rd------            Lloyd               10/2/2022 11:54:51 AM                             Links\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             Local Settings\par
+rd------            Lloyd               10/2/2022 11:54:51 AM                             Music\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             My Documents\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             NetHood\par
+rd------            Lloyd               11/16/2025 9:18:32 AM                             Pictures\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             PrintHood\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             Recent\par
+rd------            Lloyd               10/2/2022 11:54:51 AM                             Saved Games\par
+rd------            Lloyd               10/2/2022 11:56:02 AM                             Searches\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             SendTo\par
+d-------            Lloyd               9/24/2025 2:41:16 PM                              source\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             Start Menu\par
+hsdl----            SYSTEM              10/2/2022 11:53:08 AM                             Templates\par
+rd------            Lloyd               9/20/2025 8:53:31 AM                              Videos\cf3\par
+a-------            Lloyd               3/12/2026 8:23:58 AM          24 B                .lmstudio-home-pointer\par
+a-------            Lloyd               11/10/2025 2:52:48 AM         0 B                 base.FormBorderStyle\par
+a-------            Lloyd               11/10/2025 2:52:48 AM         0 B                 base.Text\par
+a-------            Lloyd               11/10/2025 2:52:48 AM         0 B                 base.WindowState\par
+hs------            Administrators      10/2/2022 11:56:24 AM         96 B                desktop.ini\par
+a-------            Lloyd               11/8/2025 8:15:00 AM          2.19 MB             giphy.gif\par
+a-------            Lloyd               11/10/2025 2:52:48 AM         0 B                 new\par
+ha------            Lloyd               3/22/2026 12:20:21 PM         8.5 MB              NTUSER.DAT\par
+hsa-----            Lloyd               10/2/2022 11:53:08 AM         152 KB              ntuser.dat.LOG1\par
+hsa-----            Lloyd               10/2/2022 11:53:08 AM         2.2 MB              ntuser.dat.LOG2\par
+hsa-----            SYSTEM              12/1/2025 1:46:03 PM          64 KB               NTUSER.DAT\{8cce8808-ceb9-11f0-8da8-00232448bf3a\}.TM.blf\par
+hsa-----            SYSTEM              12/1/2025 1:28:05 PM          512 KB              NTUSER.DAT\{8cce8808-ceb9-11f0-8da8-00232448bf3a\}.TMContainer00000000000000000001.regtrans-ms\par
+hsa-----            SYSTEM              12/1/2025 1:28:05 PM          512 KB              NTUSER.DAT\{8cce8808-ceb9-11f0-8da8-00232448bf3a\}.TMContainer00000000000000000002.regtrans-ms\par
+hsa-----            SYSTEM              10/2/2022 11:54:47 AM         64 KB               NTUSER.DAT\{d2055a2f-4282-11ed-8d1f-00232448bf3a\}.TM.blf\par
+hsa-----            SYSTEM              10/2/2022 11:53:08 AM         512 KB              NTUSER.DAT\{d2055a2f-4282-11ed-8d1f-00232448bf3a\}.TMContainer00000000000000000001.regtrans-ms\par
+hsa-----            SYSTEM              10/2/2022 11:53:08 AM         512 KB              NTUSER.DAT\{d2055a2f-4282-11ed-8d1f-00232448bf3a\}.TMContainer00000000000000000002.regtrans-ms\par
+hs------            SYSTEM              10/2/2022 11:53:08 AM         20 B                ntuser.ini\par
+a-------            Lloyd               11/10/2025 2:52:48 AM         0 B                 SkinManager.Instance\par
+a-------            Lloyd               11/10/2025 2:52:48 AM         0 B                 WindowState\par
+\par
+-----------Current Directory Count------------\par
+\par
+Total directories: 36\par
+Total files: 19\par
+\cf1 Lloyd@DESKTOP-7RTQMFJ:\cf2 ~\cf3  $ \par
+}

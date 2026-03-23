@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Shell (Professional Build)",
+            "type": "coreclr", 
+            "request": "launch",
+            "preLaunchTask": "Build with Professional MSBuild",
+            "program": "${workspaceFolder}\\Shell\\bin\\Debug\\net8.0-windows\\Shell.exe", 
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}
