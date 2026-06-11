@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj": {}
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj": {
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj",
+        "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj",
         "packagesPath": "C:\\Users\\Lloyd\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\obj\\",
+        "outputPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Lloyd\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -106,7 +106,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

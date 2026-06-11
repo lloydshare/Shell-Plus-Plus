@@ -14,14 +14,15 @@
       SOFTWARE.
 */
 using Core;
-using SetConsoleColor = Core.SystemTools.UI;
-using ProccessManage = Core.SystemTools.ProcessStart;
-using SystemCmd = Core.Commands.SystemCommands;
-using System.Runtime.Versioning;
-using Core.SystemTools;
 using Core.Commands;
+using Core.SystemTools;
+using CustomForm;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
+using ProccessManage = Core.SystemTools.ProcessStart;
+using SetConsoleColor = Core.SystemTools.UI;
+using SystemCmd = Core.Commands.SystemCommands;
 
 namespace Shell
 {
@@ -29,6 +30,19 @@ namespace Shell
     public class Shell
     {
         #region Variables
+        public static int prompt_1;
+        public static Int16 color_1;
+        public static Int16 sep_1;
+        public static Int16 color_2;
+        public static int prompt_2 ;
+        public static Int16 color_3;
+        public static Int16 sep_2;
+        public static Int16 color_4;
+        public static int prompt_3;
+        public static Int16 color_5;
+        public static Int16 end_0;
+        public static Int16 color_6;
+
         public static string s_currentDirectory = null;
         private static readonly string s_accountName = GlobalVariables.accountName;    //extract current loged username
         private static readonly string s_computerName = GlobalVariables.computerName;  //extract machine name
@@ -63,7 +77,8 @@ namespace Shell
         private Form MainFrm;
         private Editor.Controls.ShellBoxWithScrollBar DMTB;
 
-        public int prompt_length = 0;
+        //public int prompt_length = 0;
+        public string rtfprompt = string.Empty;
 
         public KeyHandler keyHandler;
 
@@ -511,11 +526,11 @@ namespace Shell
 
             keyHandler = new KeyHandler(new Core.Abstractions.Console2(), _history, AutoCompletionHandler);
 
-            string prompt = GetCurrentPrompt(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
+            rtfprompt = BuildPrompt(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd );
             // We set the color and user loged in on console and the prompt
-            SetConsoleUserConnected(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
+            //SetConsoleUserConnected(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
 
-            prompt_length = prompt.Length;
+            //prompt_length = rtfprompt.Length;
 
             MainFrm.Text = $"{s_terminalTitle} | {s_currentDirectory}";
 
@@ -531,13 +546,13 @@ namespace Shell
         public void Run()
         {
 
-            // get the current prompt to parse it out
-            string prompt = GetCurrentPrompt(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
-            prompt_length = prompt.Length;
+            //get the current prompt to parse it out
+            rtfprompt = GetCurrentPrompt(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
+           // prompt_length = prompt.Length;
 
 
             //Reading user imput.
-            s_input = FormRead(prompt);
+            s_input = FormRead(rtfprompt);
 
             //cleaning input
             s_input = s_input.Trim();
@@ -628,12 +643,12 @@ namespace Shell
 
             if (s_input == "clear")
             {
-                SetConsoleUserConnected(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
+                BuildPrompt(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
             }
             else
             {
                 Console.WriteLine();
-                SetConsoleUserConnected(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
+                BuildPrompt(s_currentDirectory, s_accountName, s_computerName, s_regUI, s_regUIcd);
             }
 
             MainFrm.Text = $"{s_terminalTitle} | {s_currentDirectory}";
@@ -756,6 +771,146 @@ namespace Shell
             {
                 return _GetCurrentPrompt(accountName, computerName, currentLocation, true);
             }
+        }
+
+        public static string BuildPrompt(string _currentLocation, string _accountName, string _computerName, string uiSettings, string uiCD)
+        {
+            accountName = _accountName;
+            computerName = _computerName;
+            currentLocation = _currentLocation;
+
+            if (currentLocation == GlobalVariables.rootPath)
+            { 
+                currentDir = false;
+            }
+            else
+            {
+                currentDir = true;
+            }
+
+            return _BuildPrompt();
+        }
+
+        private static string accountName;
+        private static string computerName;
+        private static string currentLocation;
+        private static bool currentDir;
+
+        /// <summary>
+        /// Set user color on console.
+        /// </summary>
+        /// <param name="accountName"></param>
+        /// <param name="computerName"></param>
+        /// <param name="currentLocation"></param>
+        /// <param name="currentDir"></param>
+        private static string _BuildPrompt()
+        {
+            string promptstring = "";
+            GlobalVariables.lengthPS1 = 0;
+
+            var ps2 = $"@";
+            var ps3 = $":";
+            var ps4 = $"~";
+            var ps5 = $" {s_indicator} ";
+
+            string prompt_1 = _getPrompt(Shell.prompt_1);
+            string prompt_2 = _getPrompt(Shell.prompt_2); 
+            string prompt_3 = _getPrompt(Shell.prompt_3);
+
+            if (currentDir == false)
+            {
+                if (s_userEnabled == 1)
+                {
+                    GlobalVariables.lengthPS1 += prompt_1.Length;
+                    promptstring += prompt_1;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_1, prompt_1);
+
+                   
+                    GlobalVariables.lengthPS1 += ps2.Length;
+                    promptstring += ps2;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_2, ps2);
+
+                    GlobalVariables.lengthPS1 += prompt_2.Length;
+                    promptstring += prompt_2;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_3, prompt_2);
+
+                    
+                    GlobalVariables.lengthPS1 += ps3.Length;
+                    promptstring += ps3;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_4, ps3);
+
+                   
+                    GlobalVariables.lengthPS1 += ps4.Length;
+                    promptstring += ps4;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_5, ps4);
+
+                   
+                    GlobalVariables.lengthPS1 += ps5.Length;
+                    promptstring += ps5;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_6, ps5);
+                }
+                return promptstring;
+            }
+               
+            if (s_userEnabled == 1)
+            {
+
+                GlobalVariables.lengthPS1 += accountName.Length;
+                promptstring += accountName;
+                FileSystem.ColorConsoleText((ConsoleColor)Shell.color_1, accountName);
+
+                GlobalVariables.lengthPS1 += ps2.Length;
+                promptstring += ps2;
+                FileSystem.ColorConsoleText((ConsoleColor)Shell.color_2, ps2);
+
+                GlobalVariables.lengthPS1 += computerName.Length;
+                promptstring += computerName;
+                FileSystem.ColorConsoleText((ConsoleColor)Shell.color_3, computerName);
+
+                GlobalVariables.lengthPS1 += ps3.Length;
+                promptstring += ps3;
+                FileSystem.ColorConsoleText((ConsoleColor)Shell.color_4, ps3);
+
+                if (s_isCDVisible)
+                {
+                    GlobalVariables.lengthPS1 += prompt_3.Length;
+                    promptstring += prompt_3;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_5, prompt_3);
+                }
+                else
+                {
+                    var ps = $"~";
+                    GlobalVariables.lengthPS1 += ps.Length;
+                    promptstring += ps;
+                    FileSystem.ColorConsoleText((ConsoleColor)Shell.color_5, ps);
+                }
+
+                GlobalVariables.lengthPS1 += ps5.Length;
+                promptstring += ps5;
+                FileSystem.ColorConsoleText((ConsoleColor)Shell.color_6, ps5);
+            }
+
+          
+            return promptstring;
+        }
+
+        private static string _getPrompt(int id)
+        {
+            //{ "User", "Machine", "Location", "[Space]", "[None]" };
+            switch (id)
+            {
+                case 0: //username
+                    return accountName;
+                case 1:
+                    return computerName;
+                case 2:
+                    return currentLocation;
+                case 3:
+                    return " ";
+                default:
+                    return "";
+            }
+
         }
 
         /// <summary>
@@ -897,6 +1052,7 @@ namespace Shell
 
                         var ps = $"{accountName}@{computerName}:";
                         GlobalVariables.lengthPS1 += ps.Length;
+                       
                         FileSystem.ColorConsoleText(SetConsoleColor.SetConsoleColor(s_userColor), ps);
 
                     }

@@ -1,5 +1,7 @@
+using Core;
 using CustomForm;
 using Editor.Controls;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Runtime.InteropServices;
 
 namespace Shell
@@ -7,9 +9,18 @@ namespace Shell
     public partial class ShellFrm : Skin, ISkin
     {
         //todo:           
+
+        //cleanup - find multi-threading class
+
+        //properties form -
+
         //-_--Commands------//
+        //cmd to open properties and by each tab_page by name or index
         //make Control C CNTL-X work //local to the app keyboard hook and (keylogger (off by default))
-        //picview (change to view cmd) cmd -- needs more options
+        //---Execute method need to be in new thread
+        //---Rows and Columns needs to be calacuted
+
+        //picview (change to view pic cmd) cmd -- needs more options i.e view video
         //fix snake
         //fix wtop
         //fix ping and trace output
@@ -23,31 +34,31 @@ namespace Shell
         //lspci cmd
         //usb cmds
         //GNU
-        //qemu? no graphics output
+        //qemu? hypervisor
         //AI intergration
         //vlc & windows video player?
-        //ssh/telnet/vtt - ?
+        //ssh/telnet/vtt - ? ssh added needs more work
+        //command defaults
         //-------------------//
 
         //------Others-------//
         //embed properties window into new tab or main lexicon?
-        //security options - (Special compile options)
+        //security options - extra code needs calling
         //memory options
-        //plugin loader (unsigned & signed) for custom commands and control/forms
         //script extentions/file association for scripts and option to disable and global right click menu options
-        //multi-threading
         // multi-lingrual?
         // profile & performace benchmarking
         // Icon design
         //-------------------//
 
         //------Design-------//
+        //round internal corners when using external rounded corners - 
         //Themes?
         //scroll bar preview view
-        //powershell & cmd colors and theme
-        //properties - copy & paste
-        //multi-terms + ALT f1, f2, etc, tabbed windows - with a "+" and "x" symbol and simple open and close animation
+        //powershell & cmd colors and theme & visual studio developer powershell interface - shell manager?
+        //properties context menu - copy & paste options
         //carets - no system defaults etc. - animations like ollma & grok prompt
+        //prompt antizing 
         //more custom title bars? - orginial\system theme options
         //different prompt styles & colors & themes
         //properties form on dark theme - renders badly
@@ -68,16 +79,36 @@ namespace Shell
         //maximize on title bar doesn't toggle
         //move on title bar doesnt drag move - mouse hook?
         //make autocomplete and intellisense work
-        //with a clearned shell, running cmds like ping wont stream
+        //with a clearned\clean shell, running cmds like ping wont stream
         //-------------------//
+        
+        //custom hotkeys + keylogger
+        //embedded database + optimization 
+
+        //pro features--/ Shell++ Pro
+        //extra themes
+        //background picture
+        //advanced auto-complete
+        //advanced options - memory and security
+        //docking/multi windows/terminals -
+        //a.i.
+        //plugins -
+                    //document viewer/editor 
+                    //webbrowser extension
+        //task manager
+        //ide's / running scripts
 
         private string[] _args;
+
         public Shell shell = new Shell();
 
         private readonly SkinManager SkinManager;
 
         public ShellFrm(string[] args)
         {
+            
+            //test t = new test();
+            //t.Show();
             _args = args;
             InitializeComponent();
 
@@ -91,7 +122,30 @@ namespace Shell
             rtb.MouseDown += InnerTextBox_MouseEvent;
             rtb.MouseUp += InnerTextBox_MouseEvent;
 
-            new CaretStyle
+            //new CaretStyle
+            //{
+            //    Width = 7,
+            //    Height = 5,
+            //    Color = Color.Purple,
+            //    VAlign = CaretVerticalAlign.Bottom,
+            //    EnableBlink = true,
+            //    BlinkIntervalMs = SystemInformation.CaretBlinkTime,//500,
+            //    CornerRadius = 0,
+            //    UseGradient = false,
+            //    GradientStartColor = Color.LightGreen,
+            //    GradientEndColor = Color.DarkGreen,
+            //    GradientMode = CaretGradientMode.Vertical,
+            //    UseGlow = false,
+            //    GlowColor = Color.FromArgb(160, Color.Gray),
+            //    GlowRadius = 3,
+            //    GlowIntensity = 1,
+            //    UseFillStyle = true,
+            //    FillStyle = FillStyle.BlinkingOutline,
+            //    OutlinePenWidth = 3,
+
+            //}.ApplyTo((ICaretStylable)shellBoxWithScrollBar1.ShellBox);
+
+            var default_caret = new CaretStyle
             {
                 Width = 7,
                 Height = 5,
@@ -112,10 +166,21 @@ namespace Shell
                 FillStyle = FillStyle.BlinkingOutline,
                 OutlinePenWidth = 3,
 
-            }.ApplyTo((ICaretStylable)shellBoxWithScrollBar1.ShellBox);
+            };
+
+            default_caret.ApplyTo((ICaretStylable)shellBoxWithScrollBar1.ShellBox);
 
             shellBoxWithScrollBar1.ShellBox.AutoSizeControlsToBox = false;
+
+            // Register the scroll bar visibility callback
+            Terminal.SetScrollBarVisible = visible => shellBoxWithScrollBar1.ScrollBarVisible = visible;
+
+            Terminal.GetScrollBarVisible = () =>
+              shellBoxWithScrollBar1.ScrollBarVisible;
+
         }
+
+        private bool HoldingControl = false;
 
         private void InnerTextBox_KeyDown(object? sender, KeyEventArgs e)
         {
@@ -130,14 +195,14 @@ namespace Shell
                 shell.Run();
                 
             }
-            else if (e.KeyCode == Keys.Back || e.KeyCode == Keys.RButton || e.KeyCode == Keys.Left) //set a margin
+            else if (e.KeyCode == Keys.Back || e.KeyCode == Keys.RButton || e.KeyCode == Keys.Left || HoldingControl) //set a margin
             {
                 int caretIndex = shellBoxWithScrollBar1.ShellBox.SelectionStart;
                 int currentLine = shellBoxWithScrollBar1.ShellBox.GetLineFromCharIndex(caretIndex);
                 int firstCharInLine = shellBoxWithScrollBar1.ShellBox.GetFirstCharIndexFromLine(currentLine);
                 int columnIndex = caretIndex - firstCharInLine;
 
-                if (columnIndex <= shell.prompt_length)
+                if (columnIndex <= shell.rtfprompt.Length)
                 {
                     e.SuppressKeyPress = true;
                 }
@@ -146,9 +211,24 @@ namespace Shell
                 {
                     shell.keyHandler.Handle(keyInfo);
                 }
+                if (e.KeyCode == Keys.C)
+                {
+                    //cancel keypress
+                    e.Handled = true;
+                    GlobalVariables.eventKeyFlagX = false;
+                    GlobalVariables.eventCancelKey = true;
+
+                    HoldingControl = false;
+                }
+            } 
+            else if (e.KeyCode == Keys.ControlKey)
+            {
+                HoldingControl = true;
+                e.SuppressKeyPress = true;
             }
             else
             {
+                HoldingControl = false;
                 e.SuppressKeyPress = true;
                 shell.keyHandler.Handle(keyInfo);
             }
@@ -316,7 +396,7 @@ namespace Shell
         private void InnerTextBox_MouseEvent(object? sender, MouseEventArgs e)
         {
             var textBox = shellBoxWithScrollBar1.ShellBox;
-            int promptLength = shell.prompt_length;
+            int promptLength = shell.rtfprompt.Length;
 
             int caretPosition = textBox.TextLength;
 
@@ -339,26 +419,9 @@ namespace Shell
 
             }));
 
-            //AppDomain.CurrentDomain.SetData("WindowHeight", (Func<int>)(() =>
-            //{
-            //    if (shellBoxWithScrollBar1.ShellBox.InvokeRequired)
-            //    {
-            //        var tcs = new TaskCompletionSource<int>();
-            //        shellBoxWithScrollBar1.ShellBox.InvokeAsync(() => tcs.SetResult(Height));
-            //        return tcs.Task.GetAwaiter().GetResult();  // still sync, but safer in some cases
-            //    }
-            //    return Height;
-            //}));
-
             AppDomain.CurrentDomain.SetData("WindowHeight", (Func<int>)(() =>
             {
                 return shellBoxWithScrollBar1.ShellBox.Invoke((Func<int>)(() => Height));
-
-            }));
-
-            AppDomain.CurrentDomain.SetData("WindowWidth", (Func<int>)(() =>
-            {
-                return shellBoxWithScrollBar1.ShellBox.Invoke((Func<int>)(() => Width));
 
             }));
 
@@ -394,7 +457,23 @@ namespace Shell
             AppDomain.CurrentDomain.SetData("GetConsoleTextColor", (Func<Color>)(() =>
             {
                 return shellBoxWithScrollBar1.ShellBox.Invoke((Func<Color>)(() => shellBoxWithScrollBar1.ShellBox.SelectionColor));
+            }));
 
+            AppDomain.CurrentDomain.SetData("SetConsoleColor", (Action<ConsoleColor>)(color =>
+            {
+                Invoke((Action)(() =>
+                {
+                    var tb = shellBoxWithScrollBar1.ShellBox;
+                    tb.SelectionStart = tb.TextLength;
+                    tb.SelectionLength = 0;
+                    tb.SelectionColor = FileSystem.ConsoleColorToDrawingColor(color);
+                }));
+
+            }));
+
+            AppDomain.CurrentDomain.SetData("GetConsoleColor", (Func<ConsoleColor>)(() =>
+            {
+                return shellBoxWithScrollBar1.ShellBox.Invoke((Func<ConsoleColor>)(() => FileSystem.DrawingColorToConsoleColor(shellBoxWithScrollBar1.ShellBox.SelectionColor)));
             }));
 
             AppDomain.CurrentDomain.SetData("ClearLine", (Action)(() =>
@@ -417,8 +496,8 @@ namespace Shell
                     string lineText = tb.Lines[tb.Lines.Length - 1];
 
                     // Only clear after the prompt
-                    int inputStart = lineStart + Math.Min(shell.prompt_length, lineText.Length);
-                    int inputLength = Math.Max(0, lineText.Length - shell.prompt_length);
+                    int inputStart = lineStart + Math.Min(shell.rtfprompt.Length, lineText.Length);
+                    int inputLength = Math.Max(0, lineText.Length - shell.rtfprompt.Length);
 
                     tb.SelectionStart = inputStart;
                     tb.SelectionLength = inputLength;
@@ -428,6 +507,19 @@ namespace Shell
 
             }));
 
+            AppDomain.CurrentDomain.SetData("GetCursorVisible", (Func<bool>)(() =>
+            {
+                return shellBoxWithScrollBar1.ShellBox.Invoke((Func<bool>)(() => shellBoxWithScrollBar1.ShellBox.CursorVisible));
+
+            }));
+
+            AppDomain.CurrentDomain.SetData("SetCursorVisible", (Action<bool>)(value =>
+            {
+                Invoke((Action)(() =>
+                                        shellBoxWithScrollBar1.ShellBox.CursorVisible = value
+                ));
+            }));
+
             #endregion
 
         }
@@ -435,6 +527,7 @@ namespace Shell
         private void Form1_Load(object sender, EventArgs e)
         {
             shell.Start(_args, shellBoxWithScrollBar1, this); //Start the shell
+            //Terminal.ConsoleLock = true;
         }
 
         [DllImport("user32.dll")]

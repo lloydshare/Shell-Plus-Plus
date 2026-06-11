@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OOWjPcC8FDs=",
+  "dgSpecHash": "vrcU2h42d4s=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj",
+  "projectFilePath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lloyd\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\Lloyd\\.nuget\\packages\\diffplex\\1.7.2\\diffplex.1.7.2.nupkg.sha512",

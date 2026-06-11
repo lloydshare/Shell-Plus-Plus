@@ -27,6 +27,7 @@ namespace Editor.Controls
     using System.Drawing.Drawing2D;
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
+    using static System.Windows.Forms.LinkLabel;
     #endregion
 
     #region Timing Notes
@@ -239,6 +240,44 @@ namespace Editor.Controls
         public bool PromptPinnedToBottom { get; set; } = false;
         public bool Persistant { get; set; } = true;
 
+       // public bool TestMode { get; set; } = false;
+
+        /// <summary>
+        /// If true, the caret will be hidden (no blinking or drawing).
+        /// </summary>
+        public bool CursorVisible
+        {
+            get => _cursorVisible;
+            set
+            {
+                if (_cursorVisible != value)
+                {
+                    _cursorVisible = value;
+                    if (value)
+                    {
+                        if (EnableBlink && CaretFillStyle != FillStyle.BlinkingOutline) _blink.Start();
+                        if (CaretFillStyle == FillStyle.BlinkingOutline) _outlineBlink.Start();
+                        _visible = true;
+                        InvalidateCaret();
+                    }
+                    else
+                    {
+                        _blink.Stop();
+                        _outlineBlink.Stop();
+                        _visible = false;
+                        InvalidateCaret();
+                    }
+                }
+            }
+        }
+        private bool _cursorVisible = true;
+
+        private bool _lockedResize = true;
+        public bool LockedResize
+        {
+            get => _lockedResize;
+            set => _lockedResize = value;
+        }
         #endregion
 
         #region Private Objects
@@ -313,24 +352,33 @@ namespace Editor.Controls
                 //}
             };
 
-            LostFocus += (_, __) =>
-            {
-                _blink.Stop();
-                _outlineBlink.Stop();
-                _suppress.Stop();
-                _visible = false;
-                InvalidateCaret();
+            
+                LostFocus += (_, __) =>
+                {
+                    //if (!TestMode)
+                    //{
+                    _blink.Stop();
+                    _outlineBlink.Stop();
+                    _suppress.Stop();
+                    _visible = false;
+                    InvalidateCaret();
+                    //}
+                    //else
+                    //{
+                    //    _visible = true;
+                    //    CursorVisible = true;
+                    //}
+                    //if (Persistant)
+                    //{
+                    //    // Persistor.SaveShellToFile(this, "1");
 
-                //if (Persistant)
-                //{
-                //    // Persistor.SaveShellToFile(this, "1");
-                    
-                //    if (ControlList.Count > 0)
-                //    {
-                //        Persistor.SaveAsXml(ControlList, "1.xml"); //emtpy file for some reason
-                //    }
-                //}
-            };
+                    //    if (ControlList.Count > 0)
+                    //    {
+                    //        Persistor.SaveAsXml(ControlList, "1.xml"); //emtpy file for some reason
+                    //    }
+                    //}
+                };
+            
 
             KeyDown += (s, e) =>
             {
@@ -398,8 +446,6 @@ namespace Editor.Controls
             };
             Microsoft.Win32.SystemEvents.UserPreferenceChanged += _userPrefChangedHandler;
 
-            
-            
         }
         #endregion
 
@@ -437,14 +483,9 @@ namespace Editor.Controls
         #region Private Rendering Methods
         private void SuppressSystemCaret()
         {
-            //if (!IsHandleCreated || !Focused) return;
-            //HideCaret(Handle);
-            //CreateCaret(Handle, IntPtr.Zero, 0, 0);
-            //ShowCaret(Handle);
-            //HideCaret(Handle);
-
             if (!IsHandleCreated || !Focused) return;
-            HideCaret(Handle);
+            if (_cursorVisible)
+                HideCaret(Handle);
         }
 
         public int CalculateVisibleLineCount()
@@ -960,8 +1001,7 @@ namespace Editor.Controls
             //}
 
             SuppressSystemCaret();
-
-            if (m.Msg == WM_PAINT && Focused && _visible)
+            if (m.Msg == WM_PAINT && Focused && _visible && _cursorVisible)
                 DrawCaretOverlay();
         }
 
@@ -1017,7 +1057,7 @@ namespace Editor.Controls
             _outlineBlink?.Stop();
 
             //if (Persistant)
-            //{
+            //{ 
             //    Persistor.SaveShellToFile(this, "1");
 
             //    if (ControlList.Count > 0)
@@ -1025,6 +1065,7 @@ namespace Editor.Controls
             //        Persistor.SaveAsXml(ControlList, "1.xml"); //emtpy file for some reason
             //    }
             //}
+
 
             base.OnHandleDestroyed(e);
         }
@@ -1041,12 +1082,63 @@ namespace Editor.Controls
             base.Dispose(disposing);
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            //if (!LockedResize)
+            //    return;
+
+            //// Use the current font size as the base for scaling
+            //float baseFontSize = Font.Size;
+
+            //// Calculate scale based on the change in control size
+            //float scaleW = (float)ClientSize.Width / baseFontSize;
+            //float scaleH = (float)ClientSize.Height / baseFontSize;
+            //float scale = Math.Min(scaleW, scaleH);
+            ////Debug.WriteLine(ClientSize.Width);
+            ////Debug.WriteLine(Width);
+            ////Debug.WriteLine(scaleW);
+
+            //float newFontSize = Math.Max(6f, baseFontSize * scale);
+
+           
+            //Debug.WriteLine(newFontSize);
+
+            //if (Math.Abs(Font.Size - newFontSize) > 0.1f)
+            //{
+            //    var newFont = new Font(Font.FontFamily, newFontSize, Font.Style);
+            //    Font = newFont;
+
+            //    if (TextLength > 0)
+            //    {
+            //        int selStart = SelectionStart;
+            //        int selLen = SelectionLength;
+            //        bool wasReadOnly = ReadOnly;
+            //        if (wasReadOnly) ReadOnly = false;
+
+            //        int i = 0;
+            //        while (i < TextLength)
+            //        {
+            //            Select(i, 1);
+            //            var currentFont = SelectionFont;
+            //            if (currentFont != null && Math.Abs(currentFont.Size - newFontSize) > 0.1f)
+            //            {
+            //                SelectionFont = new Font(currentFont.FontFamily, newFontSize, currentFont.Style);
+            //            }
+            //            i += SelectionLength > 0 ? SelectionLength : 1;
+            //        }
+            //        Select(selStart, selLen);
+            //        if (wasReadOnly) ReadOnly = true;
+            //    }
+            //}
+        }
         #endregion
 
         #region Win32
         [DllImport("user32.dll")] private static extern bool HideCaret(IntPtr hWnd);
-        [DllImport("user32.dll")] private static extern bool CreateCaret(IntPtr hWnd, IntPtr hBitmap, int w, int h);
-        [DllImport("user32.dll")] private static extern bool ShowCaret(IntPtr hWnd);
+        //[DllImport("user32.dll")] private static extern bool CreateCaret(IntPtr hWnd, IntPtr hBitmap, int w, int h);
+        //[DllImport("user32.dll")] private static extern bool ShowCaret(IntPtr hWnd);
         [DllImport("user32.dll")] private static extern int SendMessage(IntPtr hwnd, Int32 wMsg, Int32 wParam, ref Point pt);
         [DllImport("user32.dll")] private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
 
@@ -1055,5 +1147,4 @@ namespace Editor.Controls
         #endregion
     }
     #endregion
-
 }

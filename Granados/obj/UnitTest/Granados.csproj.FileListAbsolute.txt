@@ -1,0 +1,8 @@
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\UnitTest\Granados.XML
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\UnitTest\Granados.dll
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\UnitTest\Granados.csproj.AssemblyReference.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\UnitTest\Granados.strings.resources
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\UnitTest\Granados.strings_ja.resources
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\UnitTest\Granados.csproj.GenerateResource.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\UnitTest\Granados.csproj.CoreCompileInputs.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\UnitTest\Granados.dll

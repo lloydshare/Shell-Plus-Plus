@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CLINETCommands")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+660e8939face08ec47901159a66b7ef2318e2edc")]
 [assembly: System.Reflection.AssemblyProductAttribute("CLINETCommands")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CLINETCommands")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

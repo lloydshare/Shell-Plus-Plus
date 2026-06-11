@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eN+4m4RSZIQ=",
+  "dgSpecHash": "vnGkuhEjjG4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj",
+  "projectFilePath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lloyd\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\Lloyd\\.nuget\\packages\\konscious.security.cryptography.argon2\\1.3.1\\konscious.security.cryptography.argon2.1.3.1.nupkg.sha512",

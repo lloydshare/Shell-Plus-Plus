@@ -1,0 +1,10 @@
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\Release\Granados.XML
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\Release\Granados.dll
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\Release\Granados.pdb
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.csproj.AssemblyReference.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.strings.resources
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.strings_ja.resources
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.csproj.GenerateResource.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.csproj.CoreCompileInputs.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.dll
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Release\Granados.pdb

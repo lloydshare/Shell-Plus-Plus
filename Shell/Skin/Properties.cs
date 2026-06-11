@@ -1,14 +1,52 @@
 ﻿#pragma warning disable CS0108 
+//using Commands.TerminalCommands.ConsoleSystem;
+//using CustomForm;
+//using System;
+//using System.Collections.Generic;
+//using System.ComponentModel;
+//using System.Data;
+//using System.Drawing;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using System.Windows.Forms;
+//using static CustomForm.PS;
+
+using Editor.Controls;
+using Shell;
+using System.Drawing;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CustomForm
 {
+    ///Prompt tab
+
+    //prompt cursor icon not working and missing space and off option
+    //not applying instanly
+    //tab control - colour picker
+
+    /// Cursor Tab
+    //cursor preview with a zoomed in view
+    //flat style option on shellbox
+    //bind controls
+
+    // --inmainform property (pop-in \ out and auto save preference)
+    //bind options
+
+    //new hidden tabs..... themes - cache settings - about tab
+
     public partial class Properties : Skin
     {
         private readonly SkinManager SkinManager;
-        private readonly Skin MainForm;
+        private readonly ShellFrm MainForm;
 
         private System.Drawing.Image? _selectedBackgroundImage;
         private string? _selectedBackgroundPath;
+        private List<string> promptData = new List<string> { "User", "Machine", "Location", "[Space]", "[None]" };
+        private List<string> sep_symb = new List<string> { "@", ":", "$", "%", ">", "-", ":-" };
+
+        private List<string> console_colors = new List<string> { "Black", "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow",
+        "Gray","DarkGray","Blue","Green","Cyan","Red","Magenta","Yellow","White"};
 
         #region Constructor
         public Properties()
@@ -16,7 +54,7 @@ namespace CustomForm
             InitializeComponent();
             Sizable = false;
             SkinManager = SkinManager.Apply(this);
-            MainForm = SkinManager.GetMainForm();
+            MainForm = (ShellFrm)SkinManager.GetMainForm();
 
             // Set preview background to black
             previewBox.BackColor = System.Drawing.Color.Black;
@@ -47,11 +85,16 @@ namespace CustomForm
             previewBox.SizeChanged += (s, e) => UpdatePreview();
 
             // Also refresh the preview when related options change
-            checkRound.CheckedChanged += (s, e) => UpdatePreview();
+            checkRound.CheckedChanged += (s, e) => Update();
             checkBGBenabled.CheckedChanged += (s, e) => UpdatePreview();
             checkBBar.CheckedChanged += (s, e) => UpdatePreview();
             radioDark.CheckedChanged += (s, e) => UpdatePreview();
             radioLight.CheckedChanged += (s, e) => UpdatePreview();
+
+
+            check_ps.CheckedChanged += (s, e) => Update(1);
+
+            cb_statusbar.CheckedChanged += (s, e) => Update(2);
 
             // Picture controls
             buttonSelectPic.Click += buttonSelectPic_Click;
@@ -59,6 +102,7 @@ namespace CustomForm
 
             if (MainForm == null)
             {
+
                 MessageBox.Show("Error");
             }
             else
@@ -118,39 +162,104 @@ namespace CustomForm
 
         private void buttonSelectPic_Click(object? sender, EventArgs e)
         {
-            selectPictureDialog.Title = "Select Background Picture";
-            selectPictureDialog.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp;*.gif|All Files|*.*";
-            selectPictureDialog.CheckFileExists = true;
-            selectPictureDialog.Multiselect = false;
-            if (selectPictureDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                try
-                {
-                    // Dispose previous selection
-                    _selectedBackgroundImage?.Dispose();
+            //selectPictureDialog.Title = "Select Background Picture";
+            //selectPictureDialog.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp;*.gif|All Files|*.*";
+            //selectPictureDialog.CheckFileExists = true;
+            //selectPictureDialog.Multiselect = false;
+            //if (selectPictureDialog.ShowDialog(this) == DialogResult.OK)
+            //{
+            //    try
+            //    {
+            //        // Dispose previous selection
+            //        _selectedBackgroundImage?.Dispose();
 
-                    // Load without locking the file
-                    using var fs = new System.IO.FileStream(selectPictureDialog.FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
-                    using var temp = System.Drawing.Image.FromStream(fs);
-                    _selectedBackgroundImage = new System.Drawing.Bitmap(temp);
-                    _selectedBackgroundPath = selectPictureDialog.FileName;
+            //        // Load without locking the file
+            //        using var fs = new System.IO.FileStream(selectPictureDialog.FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite);
+            //        using var temp = System.Drawing.Image.FromStream(fs);
+            //        _selectedBackgroundImage = new System.Drawing.Bitmap(temp);
+            //        _selectedBackgroundPath = selectPictureDialog.FileName;
 
-                    PictureFileName.Text = System.IO.Path.GetFileName(_selectedBackgroundPath);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, $"Failed to load image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    _selectedBackgroundImage = null;
-                    _selectedBackgroundPath = null;
-                    PictureFileName.Text = string.Empty;
-                }
-            }
+            //        PictureFileName.Text = System.IO.Path.GetFileName(_selectedBackgroundPath);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show(this, $"Failed to load image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //        _selectedBackgroundImage = null;
+            //        _selectedBackgroundPath = null;
+            //        PictureFileName.Text = string.Empty;
+            //    }
+            //}
         }
         #endregion
 
         #region Methods
         private void BindProperties()
         {
+
+            prompt_1.DataSource = new List<string>(promptData);
+            prompt_2.DataSource = new List<string>(promptData);
+            prompt_3.DataSource = new List<string>(promptData);
+
+            sep_1.DataSource = new List<string>(sep_symb);
+            sep_2.DataSource = new List<string>(sep_symb);
+            end_0.DataSource = new List<string>(sep_symb);
+
+            color_1.DataSource = new List<string>(console_colors);
+            color_2.DataSource = new List<string>(console_colors);
+            color_3.DataSource = new List<string>(console_colors);
+            color_4.DataSource = new List<string>(console_colors);
+            color_5.DataSource = new List<string>(console_colors);
+            color_6.DataSource = new List<string>(console_colors);
+
+            prompt_1.SelectedIndex = Shell.Shell.prompt_1;
+            prompt_2.SelectedIndex = Shell.Shell.prompt_2;
+            prompt_3.SelectedIndex = Shell.Shell.prompt_3;
+
+            sep_1.SelectedIndex = Shell.Shell.sep_1;
+            sep_2.SelectedIndex = Shell.Shell.sep_2;
+            end_0.SelectedIndex = Shell.Shell.end_0;
+
+            color_1.SelectedIndex = Shell.Shell.color_1;
+            color_2.SelectedIndex = Shell.Shell.color_2;
+            color_3.SelectedIndex = Shell.Shell.color_3;
+            color_4.SelectedIndex = Shell.Shell.color_4;
+            color_5.SelectedIndex = Shell.Shell.color_5;
+            color_6.SelectedIndex = Shell.Shell.color_6;
+
+
+            //needs color
+
+            lbl_sbs.Text = String.Format(lbl_sbs.Text, PS.SystemInfo.GetSecureBootState());
+
+            //var tpm = SystemInfo.GetTpmStatus(); slow
+
+            //string TPM = String.Empty;
+
+            //if (!tpm.IsPresent)
+            //{
+            //    TPM = "No TPM detected";
+            //}
+            //else if (!tpm.IsReady)
+            //{
+            //    TPM = $"TPM present but not ready (Spec: {tpm.SpecVersion})";
+            //}
+            //else
+            //{
+            //    TPM = "TPM  ready";
+            //}
+
+            //lbl_tpms.Text = String.Format(lbl_tpms.Text, TPM);
+
+            var drives = PS.SystemInfo.GetBitLockerDriveStatus();
+
+            string bitlocker = String.Empty;
+            foreach (var d in drives)
+            {
+                bitlocker += $"{d.DriveLetter}: {d.ConversionStatus}\r\n";
+            }
+
+            lbl_bls.Text = String.Format(lbl_bls.Text, bitlocker);
+
             if (SkinManager.Theme == SkinManager.Themes.DARK)
             {
                 radioDark.Checked = true;
@@ -163,6 +272,13 @@ namespace CustomForm
             checkThemeButton.Checked = MainForm.ThemeButton;
             checkDrop.Checked = MainForm.ShowDropShadow;
             checkRound.Checked = MainForm.RoundedCorners;
+
+
+            check_ps.Checked = MainForm.ps_en;
+            cp_ps_attr.Enabled = check_ps.Checked;
+            cp_ps_attr.SelectedIndex = (int)MainForm.wda_attr;
+
+            cb_statusbar.Checked = MainForm.StatusBarEnabled;
 
             checkBGBenabled.Checked = MainForm.BlurredBackgound;
             checkBBar.Checked = MainForm.BlurredTitleBar;
@@ -206,24 +322,91 @@ namespace CustomForm
 
             UpdatePreview();
             Update();
+            Update(1);
+            UpdatePromptPreview();
+
+            //bind current caret properties
+
+            UpdateCaretPreview();
         }
 
         private void Update()
         {
-            if (checkRound.Checked == true)
+            Update(0);
+        }
+
+        private void Update(int option)
+        {
+
+            switch (option)
             {
-                nRadius.Enabled = true;
-                lRadius.Enabled = true;
-            }
-            else
-            {
-                nRadius.Enabled = false;
-                lRadius.Enabled = false;
+                case 0:
+                    if (checkRound.Checked == true)
+                    {
+                        lb_faux1.Visible = true;
+                        lb_faux1.Enabled = false;
+                        nRadius.Enabled = true;
+                        lRadius.Enabled = true;
+
+                        lb_faux1.Visible = true;
+                        nRadius.Visible = true;
+                        lRadius.Visible = true;
+                    }
+                    else
+                    {
+                        lb_faux1.Visible = false;
+                        nRadius.Visible = false;
+                        lRadius.Visible = false;
+
+                        lb_faux1.Enabled = false;
+                        nRadius.Enabled = false;
+                        lRadius.Enabled = false;
+                    }
+                    break;
+                case 1:
+
+                    if (check_ps.Checked == true)
+                    {
+                        lbl_mode.Enabled = true;
+                        cp_ps_attr.Enabled = true;
+
+                        lbl_mode.Visible = true;
+                        cp_ps_attr.Visible = true;
+
+                    }
+                    else
+                    {
+                        lbl_mode.Enabled = false;
+                        cp_ps_attr.Enabled = false;
+
+                        lbl_mode.Visible = false;
+                        cp_ps_attr.Visible = false;
+                    }
+                    break;
+
+                case 2:
+
+                    break;
             }
         }
 
         private void SaveProperties()
         {
+            Shell.Shell.prompt_1 = prompt_1.SelectedIndex;
+            Shell.Shell.prompt_2 = prompt_2.SelectedIndex;
+            Shell.Shell.prompt_3 = prompt_3.SelectedIndex;
+
+            Shell.Shell.sep_1 = (short)sep_1.SelectedIndex;
+            Shell.Shell.sep_2 = (short)sep_2.SelectedIndex;
+            Shell.Shell.end_0 = (short)end_0.SelectedIndex;
+
+            Shell.Shell.color_1 = (short)color_1.SelectedIndex;
+            Shell.Shell.color_2 = (short)color_2.SelectedIndex;
+            Shell.Shell.color_3 = (short)color_3.SelectedIndex;
+            Shell.Shell.color_4 = (short)color_4.SelectedIndex;
+            Shell.Shell.color_5 = (short)color_5.SelectedIndex;
+            Shell.Shell.color_6 = (short)color_6.SelectedIndex;
+
             if (radioDark.Checked == true)
             {
                 SkinManager.Theme = SkinManager.Themes.DARK;
@@ -263,6 +446,10 @@ namespace CustomForm
                 // Ignore invalid assignments
             }
 
+            MainForm.ps_en = check_ps.Checked;
+            MainForm.wda_attr = (PS.WDA_ATTRIBUTE)cp_ps_attr.SelectedIndex;
+            MainForm.StatusBarEnabled = cb_statusbar.Checked;
+
             // Apply background image
             if (cbPic.Checked)
             {
@@ -300,10 +487,10 @@ namespace CustomForm
                 // Determine a desktop surface (use virtual screen size)
                 int desktopW = System.Windows.Forms.SystemInformation.VirtualScreen.Width;
                 int desktopH = System.Windows.Forms.SystemInformation.VirtualScreen.Height;
-                if (desktopW <= 0 || desktopH <= 0)
-                {
-                    desktopW = 1920; desktopH = 1080; // fallback
-                }
+                //if (desktopW <= 0 || desktopH <= 0)
+                //{
+                //    desktopW = 1920; desktopH = 1080; // fallback
+                //}
 
                 const int margin = 6; // margin inside preview
                 float scale = System.MathF.Min((boxW - margin * 2f) / desktopW, (boxH - margin * 2f) / desktopH);
@@ -394,11 +581,109 @@ namespace CustomForm
             previewBox.Image?.Dispose();
             previewBox.Image = bmp;
         }
+
+        private void UpdateCaretPreview()
+        {
+            C_pbox.BackColor = (0x1F1F1F).ToColor();
+            C_pbox.ForeColor = Color.White;
+
+            //build new caret 
+
+            var caret = new CaretStyle
+            {
+                Width = 7,
+                Height = 5,
+                Color = Color.Purple,
+                VAlign = CaretVerticalAlign.Bottom,
+                EnableBlink = true,
+                BlinkIntervalMs = SystemInformation.CaretBlinkTime,//500,
+                CornerRadius = 0,
+                UseGradient = false,
+                GradientStartColor = Color.LightGreen,
+                GradientEndColor = Color.DarkGreen,
+                GradientMode = CaretGradientMode.Vertical,
+                UseGlow = false,
+                GlowColor = Color.FromArgb(160, Color.Gray),
+                GlowRadius = 3,
+                GlowIntensity = 1,
+                UseFillStyle = true,
+                FillStyle = FillStyle.BlinkingOutline,
+                OutlinePenWidth = 3,
+            };
+
+            caret.ApplyTo((ICaretStylable)C_pbox);
+        }
+
+        private void UpdatePromptPreview()
+        {
+            //generate the whole string in code
+
+            //if (SkinManager.Theme == SkinManager.Themes.LIGHT)
+            //{
+            tb_preview.BackColor = (0x1F1F1F).ToColor();
+            tb_preview.ForeColor = Color.White;
+
+            //tb_preview.Rtf = MainForm.shellBoxWithScrollBar1.ShellBox.Lines.Skip(Math.Max(0, MainForm.shellBoxWithScrollBar1.ShellBox.Lines.Length - 3)).ToArray();
+            SetLastNLinesRtf(MainForm.shellBoxWithScrollBar1.ShellBox, tb_preview, 3);
+            // tb_preview.te
+
+            //tb_preview.Text = tb_preview.Text.Replace("{0}", MainForm.shellBoxWithScrollBar1.ShellBox.Rtf);
+
+            // }
+
+
+        }
+
+
+
+        private void SetLastNLinesRtf(System.Windows.Forms.RichTextBox source, System.Windows.Forms.RichTextBox target, int n)
+        {
+            int totalLines = source.Lines.Length;
+            if (totalLines == 0)
+            {
+                target.Clear();
+                return;
+            }
+
+            int startLine = Math.Max(0, totalLines - n);
+            int startIndex = source.GetFirstCharIndexFromLine(startLine);
+            //int startIndex = source.Rtf.
+
+            int endIndex = source.TextLength;
+
+            source.Select(startIndex, endIndex - startIndex);
+            target.Rtf = source.SelectedRtf;
+
+            source.Select(0, 0);
+        }
         #endregion
 
         private void checkRound_CheckedChanged(object sender, EventArgs e)
         {
             Update();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 1)
+            {
+                C_pbox.Focus();
+            }
+        }
+
+        private void C_editbut_Click(object sender, EventArgs e)
+        {
+            C_pbox.Focus();
+        }
+
+        //private void Properties_Load(object sender, EventArgs e)
+        //{
+        //    this.shellBox1.Focus();
+        //}
     }
 }

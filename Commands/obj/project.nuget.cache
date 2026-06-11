@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1NB0J3z0ofk=",
+  "dgSpecHash": "75RtKb5qbxo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj",
+  "projectFilePath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Lloyd\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\Lloyd\\.nuget\\packages\\diffplex\\1.7.2\\diffplex.1.7.2.nupkg.sha512",

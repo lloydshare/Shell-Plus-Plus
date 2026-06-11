@@ -58,6 +58,7 @@ C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\runtimes\win\li
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\CLINETCommands.dll
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Commands.dll
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Core.dll
+C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Granados.dll
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Interop.NetFwTypeLib.dll
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\System.Management.Automation.dll
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Interop.IWshRuntimeLibrary.dll
@@ -65,6 +66,8 @@ C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\CLINETCommands.
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Commands.pdb
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Commands.dll.config
 C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Core.pdb
+C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Granados.pdb
+C:\Users\Lloyd\source\repos\Shell\Shell\bin\Debug\net8.0-windows\Granados.xml
 C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Shell.csproj.AssemblyReference.cache
 C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Editor.Controls.DarkModeTextBox.resources
 C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Editor.Controls.ShellBoxWithScrollBar.resources
@@ -82,3 +85,5 @@ C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\refint\Shell.dl
 C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Shell.pdb
 C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Shell.genruntimeconfig.cache
 C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\ref\Shell.dll
+C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Shell.test.resources
+C:\Users\Lloyd\source\repos\Shell\Shell\obj\Debug\net8.0-windows\Shell.Properties.Resources.resources

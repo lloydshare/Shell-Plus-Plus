@@ -9,9 +9,64 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controls\Material\BaseTextBox.cs" />
+    <Compile Remove="Controls\Material\FlexibleMaterialDialog.cs" />
+    <Compile Remove="Controls\Material\MaterialButton.cs" />
+    <Compile Remove="Controls\Material\MaterialCard.cs" />
+    <Compile Remove="Controls\Material\MaterialCheckBox.cs" />
+    <Compile Remove="Controls\Material\MaterialCheckedListBox.cs" />
+    <Compile Remove="Controls\Material\MaterialComboBox.cs" />
+    <Compile Remove="Controls\Material\MaterialContextMenuStrip.cs" />
+    <Compile Remove="Controls\Material\MaterialDialog.cs" />
+    <Compile Remove="Controls\Material\MaterialDivider.cs" />
+    <Compile Remove="Controls\Material\MaterialDrawer.cs" />
+    <Compile Remove="Controls\Material\MaterialExpansionPanel.cs" />
+    <Compile Remove="Controls\Material\MaterialFloatingActionButton.cs" />
+    <Compile Remove="Controls\Material\MaterialForm.cs" />
+    <Compile Remove="Controls\Material\MaterialLabel.cs" />
+    <Compile Remove="Controls\Material\MaterialListBox.cs" />
+    <Compile Remove="Controls\Material\MaterialListView.cs" />
+    <Compile Remove="Controls\Material\MaterialMaskedTextBox.cs" />
+    <Compile Remove="Controls\Material\MaterialMessageBox.cs" />
+    <Compile Remove="Controls\Material\MaterialMultiLineTextBox.cs" />
+    <Compile Remove="Controls\Material\MaterialMultiLineTextBox2.cs" />
+    <Compile Remove="Controls\Material\MaterialProgressBar.cs" />
+    <Compile Remove="Controls\Material\MaterialRadioButton.cs" />
+    <Compile Remove="Controls\Material\MaterialScrollBar.cs" />
+    <Compile Remove="Controls\Material\MaterialSlider.cs" />
+    <Compile Remove="Controls\Material\MaterialSnackBar.cs" />
+    <Compile Remove="Controls\Material\MaterialSwitch.cs" />
+    <Compile Remove="Controls\Material\MaterialTabControl.cs" />
+    <Compile Remove="Controls\Material\MaterialTabSelector.cs" />
+    <Compile Remove="Controls\Material\MaterialTextBox.cs" />
+    <Compile Remove="Controls\Material\MaterialTextBox2.cs" />
+    <Compile Remove="Controls\SkinTabControl.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Controls\Material\FlexibleMaterialDialog.resx" />
+    <EmbeddedResource Remove="Controls\Material\MaterialForm.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CLICommands\CLINETCommands.csproj" />
     <ProjectReference Include="..\Commands\Commands.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

@@ -1,557 +1,9 @@
-﻿
-#region old
-///*
-// wTpp - A simple console-based process listing tool for Windows.
-//    * This tool provides a real-time view of running processes, their CPU and memory usage,
-//    * The first tool that is fully generated with AI and is designed to be simple and efficient.
-// */
-
-//using System;
-//using System.Collections.Generic;
-//using System.Diagnostics;
-//using System.Linq;
-//using System.Runtime.InteropServices;
-//using System.Runtime.Versioning;
-//using System.Security.Principal;
-//using System.Threading;
-
-//namespace Core.SystemTools
-//{
-//    [SupportedOSPlatform("Windows")]
-
-//    public class ProcessListingUI
-//    {
-//        int selectedIndex = 0;
-//        int windowHeight = Terminal.WindowHeight() - 4;
-
-//        DateTime prevSampleTime = DateTime.UtcNow;
-//        volatile bool exitRequested = false;
-//        Dictionary<int, double> cpuUsages = new();
-//        Dictionary<int, TimeSpan> prevCpuTimes = new();
-//        PerformanceCounter cpuCounter = new("Processor", "% Processor Time", "_Total");
-//        PerformanceCounter memAvailableCounter = new("Memory", "Available MBytes");
-//        string searchQuery = "";
-//        bool inSearchMode = false;
-//        string inputPrompt = "";
-//        SortMode currentSortMode = SortMode.Name;
-
-//        // Shared fields updated by SampleCpuLoop
-//        double latestCpuPercent = 0;
-//        double latestMemPercent = 0;
-//        double latestMemUsed = 0;
-//        double latestMemTotal = 0;
-
-
-//        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-//        public class MEMORYSTATUSEX
-//        {
-//            public uint dwLength;
-//            public uint dwMemoryLoad;
-//            public ulong ullTotalPhys;
-//            public ulong ullAvailPhys;
-//            public ulong ullTotalPageFile;
-//            public ulong ullAvailPageFile;
-//            public ulong ullTotalVirtual;
-//            public ulong ullAvailVirtual;
-//            public ulong ullAvailExtendedVirtual;
-//            public MEMORYSTATUSEX()
-//            {
-//                this.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
-//            }
-//        }
-
-//        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-//        static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
-
-//        [DllImport("advapi32.dll", SetLastError = true)]
-//        static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
-
-//        [DllImport("advapi32.dll", SetLastError = true)]
-//        static extern bool GetTokenInformation(IntPtr TokenHandle, int TokenInformationClass, IntPtr TokenInformation, int TokenInformationLength, out int ReturnLength);
-
-//        [DllImport("kernel32.dll", SetLastError = true)]
-//        static extern bool CloseHandle(IntPtr hObject);
-
-//        const int TOKEN_QUERY = 0x0008;
-//        const int TokenUser = 1;
-
-
-//        (double usedMb, double totalMb, double percent) GetMemoryUsage()
-//        {
-//            MEMORYSTATUSEX memStatus = new();
-//            if (GlobalMemoryStatusEx(memStatus))
-//            {
-//                double totalMb = memStatus.ullTotalPhys / 1024.0 / 1024.0;
-//                double availMb = memStatus.ullAvailPhys / 1024.0 / 1024.0;
-//                double usedMb = totalMb - availMb;
-//                double percent = (usedMb / totalMb) * 100;
-//                return (usedMb, totalMb, percent);
-//            }
-//            return (0, 0, 0);
-//        }
-
-//        /// <summary>
-//        /// Entry point to run the process listing UI.
-//        /// </summary>
-//        public void Run()
-//        {
-//            Console.CursorVisible = false;
-
-//            new Thread(ReadInput) { IsBackground = true }.Start();
-//            new Thread(SampleCpuLoop) { IsBackground = true }.Start();
-//            new Thread(RenderLoop) { IsBackground = true }.Start();
-
-//            while (!exitRequested)
-//                Thread.Sleep(50); // keep main alive
-//        }
-
-
-//        string GetProcessUser(Process process)
-//        {
-//            IntPtr tokenHandle = IntPtr.Zero;
-
-//            try
-//            {
-//                if (!OpenProcessToken(process.Handle, TOKEN_QUERY, out tokenHandle))
-//                    return "-";
-
-//                int tokenInfoLength = 0;
-//                GetTokenInformation(tokenHandle, TokenUser, IntPtr.Zero, 0, out tokenInfoLength);
-//                IntPtr tokenInfo = Marshal.AllocHGlobal(tokenInfoLength);
-
-//                if (!GetTokenInformation(tokenHandle, TokenUser, tokenInfo, tokenInfoLength, out _))
-//                    return "-";
-
-//                var sid = Marshal.ReadIntPtr(tokenInfo);
-//                var account = new SecurityIdentifier(sid);
-//                string fullName = account.Translate(typeof(NTAccount)).ToString();
-
-//                Marshal.FreeHGlobal(tokenInfo);
-
-//                // Strip domain or machine name
-//                int slashIndex = fullName.IndexOf('\\');
-//                return slashIndex >= 0 ? fullName[(slashIndex + 1)..] : fullName;
-//            }
-//            catch
-//            {
-//                return "-";
-//            }
-//            finally
-//            {
-//                if (tokenHandle != IntPtr.Zero)
-//                    CloseHandle(tokenHandle);
-//            }
-//        }
-
-
-//        /// <summary>
-//        /// Generates a visual usage bar as a string representation, with customizable width, color, and threshold.
-//        /// </summary>
-//        /// <remarks>The method sets the console's foreground color based on the specified threshold and
-//        /// percentage. Ensure that the console color is reset after using this method to avoid unintended color changes
-//        /// in subsequent output.</remarks>
-//        /// <param name="percent">The percentage value used to determine the filled portion of the bar. Must be between 0 and 100.</param>
-//        /// <param name="width">The total width of the usage bar, in characters.</param>
-//        /// <param name="colorLow">The console color used for the bar when <paramref name="percent"/> is below the <paramref
-//        /// name="threshold"/>.</param>
-//        /// <param name="colorHigh">The console color used for the bar when <paramref name="percent"/> is equal to or exceeds the <paramref
-//        /// name="threshold"/>.</param>
-//        /// <param name="threshold">The percentage threshold that determines whether <paramref name="colorHigh"/> or <paramref name="colorLow"/>
-//        /// is applied. Defaults to 80.0.</param>
-//        /// <returns>A string representing the usage bar, with the filled portion determined by <paramref name="percent"/>. The
-//        /// string is padded to match the specified <paramref name="width"/>.</returns>
-//        string GetUsageBar(double percent, int width, ConsoleColor colorLow, ConsoleColor colorHigh, double threshold = 80.0)
-//        {
-//            int filled = (int)(percent / 100 * width);
-//            var color = percent >= threshold ? colorHigh : colorLow;
-
-//            var bar = new string('█', filled).PadRight(width);
-
-//            Console.ForegroundColor = color;
-//            return bar;
-//        }
-
-//        /// <summary>
-//        /// Continuously samples CPU and memory usage, updating the shared fields.
-//        /// </summary>
-//        void SampleCpuLoop()
-//        {
-//            while (!exitRequested)
-//            {
-//                latestCpuPercent = cpuCounter.NextValue();
-//                (latestMemUsed, latestMemTotal, latestMemPercent) = GetMemoryUsage();
-
-//                var processes = Process.GetProcesses();
-//                DateTime now = DateTime.UtcNow;
-//                double interval = (now - prevSampleTime).TotalSeconds;
-//                prevSampleTime = now;
-
-//                var newUsages = new Dictionary<int, double>();
-
-//                foreach (var proc in processes)
-//                {
-//                    try
-//                    {
-//                        var cpuTime = proc.TotalProcessorTime;
-
-//                        if (prevCpuTimes.TryGetValue(proc.Id, out var prevCpu))
-//                        {
-//                            var delta = (cpuTime - prevCpu).TotalSeconds;
-//                            var percent = (delta / interval) / Environment.ProcessorCount * 100;
-//                            newUsages[proc.Id] = Math.Max(0.0, percent);
-//                        }
-//                        else
-//                        {
-//                            newUsages[proc.Id] = 0.0;
-//                        }
-
-//                        prevCpuTimes[proc.Id] = cpuTime;
-//                    }
-//                    catch { }
-//                }
-
-//                var currentIds = processes.Select(p => p.Id).ToHashSet();
-//                foreach (var dead in prevCpuTimes.Keys.Except(currentIds).ToList())
-//                    prevCpuTimes.Remove(dead);
-
-//                cpuUsages = newUsages;
-
-//                Thread.Sleep(1000); // sampling interval
-//            }
-//        }
-
-//        void ClearSeach()
-//        {
-//            inSearchMode = false;
-//            searchQuery = "";
-//            inputPrompt = "";
-//            var processes = Process.GetProcesses()
-//.OrderBy(p => p.ProcessName)
-//.ToArray();
-
-//            int maxDisplay = Console.WindowHeight - 6; // Reserve lines for title + bars + header
-//            int visibleCount = Math.Min(maxDisplay, processes.Length);
-//            // --- Clear any leftover lines below the list ---
-//            for (int i = visibleCount; i < maxDisplay; i++)
-//            {
-//                Console.SetCursorPosition(0, i + 5);
-//                Console.Write(new string(' ', Console.WindowWidth - 1));
-//            }
-
-//            // --- Clear the bottom line (search prompt area) ---
-//            Console.SetCursorPosition(0, Console.WindowHeight - 1);
-//            Console.Write(new string(' ', Console.WindowWidth - 1));
-//        }
-
-//        /// <summary>
-//        /// Continuously reads user input from the console and processes it to control application behavior.
-//        /// </summary>
-//        /// <remarks>This method listens for key presses and performs actions based on the input. It
-//        /// supports navigation using the arrow keys, process termination with the 'K' key, and application exit with
-//        /// the 'Q' key. The method runs in a loop until the exit condition is triggered.</remarks>
-//        void ReadInput()
-//        {
-//            while (!exitRequested)
-//            {
-//                if (!Console.KeyAvailable)
-//                {
-//                    Thread.Sleep(10);
-//                    continue;
-//                }
-
-//                var keyInfo = Console.ReadKey(true);
-
-//                if (inSearchMode)
-//                {
-//                    if (keyInfo.Key == ConsoleKey.Enter)
-//                    {
-//                        SearchAndScrollToProcess(searchQuery.Trim());
-//                        ClearSeach();
-//                    }
-//                    else if (keyInfo.Key == ConsoleKey.Escape)
-//                    {
-//                        ClearSeach();
-//                    }
-//                    else if (keyInfo.Key == ConsoleKey.Backspace && searchQuery.Length > 0)
-//                    {
-//                        searchQuery = searchQuery[..^1];
-//                    }
-//                    else if (keyInfo.KeyChar != '\u0000')
-//                    {
-//                        searchQuery += keyInfo.KeyChar;
-//                    }
-
-//                    RenderSearchPrompt();
-//                    continue;
-//                }
-
-//                switch (keyInfo.Key)
-//                {
-//                    case ConsoleKey.UpArrow:
-//                        if (selectedIndex > 0) selectedIndex--;
-//                        break;
-//                    case ConsoleKey.DownArrow:
-//                        selectedIndex++;
-//                        break;
-//                    case ConsoleKey.K:
-//                        KillSelectedProcess();
-//                        break;
-//                    case ConsoleKey.Q:
-//                        exitRequested = true;
-//                        Terminal.Clear();
-//                        Console.CursorVisible = true;
-//                        break;
-//                    case ConsoleKey.M:
-//                        currentSortMode = SortMode.Memory;
-//                        break;
-//                    case ConsoleKey.C:
-//                        currentSortMode = SortMode.CPU;
-//                        break;
-//                    case ConsoleKey.N: // Sort by Name
-//                        currentSortMode = SortMode.Name;
-//                        break;
-//                    case ConsoleKey.Oem2: // '/' key
-//                        inSearchMode = true;
-//                        searchQuery = "";
-//                        RenderSearchPrompt();
-
-
-//                        Console.SetCursorPosition(0, Console.WindowHeight - 1);
-//                        Console.Write((inputPrompt ?? "").PadRight(Console.WindowWidth - 1));
-//                        Console.ResetColor();
-//                        break;
-//                }
-//            }
-//        }
-
-//        /// <summary>
-//        /// Searches for a process by name and scrolls to its position in the list.
-//        /// </summary>
-//        /// <remarks>If a matching process is found, its index is selected. If no match is found,  a
-//        /// message is displayed in the console indicating that no process matches the query.</remarks>
-//        /// <param name="query">The case-insensitive substring to search for in process names.</param>
-//        void SearchAndScrollToProcess(string query)
-//        {
-//            var processes = GetSortedProcesses();
-
-//            for (int i = 0; i < processes.Length; i++)
-//            {
-//                try
-//                {
-//                    if (processes[i].ProcessName.StartsWith(query, StringComparison.OrdinalIgnoreCase))
-//                    {
-//                        selectedIndex = i;
-//                        return;
-//                    }
-//                }
-//                catch { }
-//            }
-//        }
-
-//        /// <summary>
-//        /// Renders a search prompt at the bottom of the console window.
-//        /// </summary>
-//        /// <remarks>The search prompt is displayed in yellow text and includes the current search query.
-//        /// The prompt is padded to fill the width of the console window.</remarks>
-//        void RenderSearchPrompt()
-//        {
-//            inputPrompt = inSearchMode ? "/" + searchQuery : "";
-//        }
-
-
-//        /// <summary>
-//        /// Terminates the process selected by the user.
-//        /// </summary>
-//        /// <remarks>This method retrieves all currently running processes, orders them by name, and
-//        /// attempts to terminate  the process at the specified index. If the process is successfully terminated, the
-//        /// method waits for  up to 2 seconds for the process to exit.</remarks>
-//        void KillSelectedProcess()
-//        {
-//            try
-//            {
-//                var processes = GetSortedProcesses();
-
-//                if (selectedIndex >= 0 && selectedIndex < processes.Length)
-//                {
-//                    var proc = processes[selectedIndex];
-//                    proc.Kill();
-//                    proc.WaitForExit(2000); // wait max 2 seconds for process to exit
-//                }
-//            }
-//            catch
-//            {
-//                // Optional: display an error somewhere or ignore if access denied
-//            }
-//        }
-
-//        /// <summary>
-//        /// Continuously renders the process list and system resource usage in the console. 
-//        /// </summary>
-//        void RenderLoop()
-//        {
-//            while (!exitRequested)
-//            {
-//                var processes = Process.GetProcesses();
-
-//                switch (currentSortMode)
-//                {
-//                    case SortMode.CPU:
-//                        processes = processes.OrderByDescending(p => cpuUsages.TryGetValue(p.Id, out var cpu) ? cpu : 0).ToArray();
-//                        break;
-//                    case SortMode.Memory:
-//                        processes = processes.OrderByDescending(p =>
-//                        {
-//                            try { return p.PrivateMemorySize64; }
-//                            catch { return 0L; }
-//                        }).ToArray();
-//                        break;
-//                    default:
-//                        processes = processes.OrderBy(p => p.ProcessName).ToArray();
-//                        break;
-//                }
-
-//                var processArray = processes.ToArray();
-
-//                int maxDisplay = Console.WindowHeight - 6; // Reserve lines for title + bars + header
-//                int visibleCount = Math.Min(maxDisplay, processes.Length);
-//                int start = Math.Clamp(selectedIndex - visibleCount / 2, 0, processes.Length - visibleCount);
-
-//                double cpuPercent = cpuCounter.NextValue(); // total CPU %
-//                (double memUsed, double memTotal, double memPercent) = GetMemoryUsage();
-
-//                // --- Draw Title ---
-//                Console.SetCursorPosition(0, 0);
-//                Console.Write(new string(' ', Console.WindowWidth)); // clear line 0
-//                Console.SetCursorPosition(0, 0);
-//                Console.ForegroundColor = ConsoleColor.Cyan;
-//                Console.Write($"WTop - ↑/↓ navigate | 'Q' quit | 'K' kill | '/' search | 'C'=CPU 'M'=Mem 'N'=Name | Sort: {currentSortMode}".PadRight(Console.WindowWidth - 1));
-//                Console.ResetColor();
-
-//                // --- Draw CPU Bar ---
-//                Console.SetCursorPosition(0, 1);
-//                Console.Write(new string(' ', Console.WindowWidth)); // clear line 1
-//                Console.SetCursorPosition(0, 1);
-//                Console.Write("CPU: ");
-//                string cpuBar = GetUsageBar(cpuPercent, 30, ConsoleColor.Green, ConsoleColor.Red);
-//                Console.Write(cpuBar);
-//                Console.ResetColor();
-//                Console.Write($" {cpuPercent:0.0}%".PadLeft(7));
-
-//                // --- Draw Memory Bar ---
-//                Console.SetCursorPosition(0, 2);
-//                Console.Write(new string(' ', Console.WindowWidth)); // clear line 2
-//                Console.SetCursorPosition(0, 2);
-//                Console.Write("MEM: ");
-//                string memBar = GetUsageBar(memPercent, 30, ConsoleColor.Yellow, ConsoleColor.Red);
-//                Console.Write(memBar);
-//                Console.ResetColor();
-//                Console.Write($" {memUsed:0.0}MB / {memTotal:0.0}MB ({memPercent:0.0}%)".PadLeft(25));
-
-//                // --- Blank line ---
-//                Console.SetCursorPosition(0, 3);
-//                Console.Write(new string(' ', Console.WindowWidth)); // clear line 3
-
-//                // --- Draw process header ---
-//                Console.SetCursorPosition(0, 4);
-//                Console.Write(new string(' ', Console.WindowWidth)); // clear line 4
-//                Console.SetCursorPosition(0, 4);
-//                Console.BackgroundColor = ConsoleColor.Green;
-//                Console.ForegroundColor = ConsoleColor.Black;
-//                Console.Write($"{"PID",5} {"Name",-25} {"CPU%",6} {"Mem(MB)",8} {"Threads",8} {"User",-15}".PadRight(Console.WindowWidth - 1));
-//                Console.ResetColor();
-
-//                // --- Draw process list ---
-//                for (int i = 0; i < visibleCount; i++)
-//                {
-//                    int index = start + i;
-//                    var proc = processes[index];
-//                    string line;
-
-//                    try
-//                    {
-//                        var cpu = cpuUsages.TryGetValue(proc.Id, out var value) ? value : 0.0;
-//                        var mem = proc.PrivateMemorySize64 / 1024.0 / 1024.0;
-//                        //string title = string.IsNullOrWhiteSpace(proc.MainWindowTitle) ? "-" : Truncate(proc.MainWindowTitle, 25);
-//                        string user = Truncate(GetProcessUser(proc), 15);
-//                        line = $"{proc.Id,5} {Truncate(proc.ProcessName, 25),-25} {cpu,6:0.0} {mem,8:0.0} {proc.Threads.Count,8} {user,-15}";
-//                    }
-//                    catch
-//                    {
-//                        line = $"{proc.Id,5} {"<Access Denied>",-25} {"0.0",6} {"N/A",8} {"N/A",8}";
-//                    }
-
-//                    Console.SetCursorPosition(0, i + 5);
-//                    if (index == selectedIndex)
-//                    {
-//                        Console.BackgroundColor = ConsoleColor.DarkBlue;
-//                        Console.ForegroundColor = ConsoleColor.White;
-//                        Console.Write(line.PadRight(Console.WindowWidth - 1));
-//                        Console.ResetColor();
-//                    }
-//                    else
-//                    {
-//                        Console.Write(line.PadRight(Console.WindowWidth - 1));
-//                    }
-//                }
-
-//                // --- Draw the search text ---
-//                Console.SetCursorPosition(0, Console.WindowHeight - 1);
-//                Console.Write((inputPrompt ?? "").PadRight(Console.WindowWidth - 1));
-//                Console.ResetColor();
-
-//                // --- Refresh rate ---
-//                Thread.Sleep(150);
-//            }
-//        }
-
-//        double SafeGetMemory(Process p)
-//        {
-//            try { return p.PrivateMemorySize64; }
-//            catch { return 0; }
-//        }
-
-//        /// <summary>
-//        /// Truncates the specified string to a maximum length, appending "..." if truncation occurs.
-//        /// </summary>
-//        /// <param name="value">The string to be truncated. Cannot be <see langword="null"/>.</param>
-//        /// <param name="maxLength">The maximum allowed length of the resulting string. Must be greater than 3.</param>
-//        /// <returns>The original string if its length is less than or equal to <paramref name="maxLength"/>;  otherwise, a
-//        /// truncated version of the string with "..." appended.</returns>
-//        string Truncate(string value, int maxLength)
-//        {
-//            return value.Length <= maxLength ? value : value.Substring(0, maxLength - 3) + "...";
-//        }
-
-//        enum SortMode
-//        {
-//            Name,
-//            Memory,
-//            CPU
-//        }
-
-//        Process[] GetSortedProcesses()
-//        {
-//            var processes = Process.GetProcesses();
-
-//            return currentSortMode switch
-//            {
-//                SortMode.CPU => processes.OrderByDescending(p => cpuUsages.TryGetValue(p.Id, out var cpu) ? cpu : 0).ToArray(),
-//                SortMode.Memory => processes.OrderByDescending(p =>
-//                {
-//                    try { return p.PrivateMemorySize64; }
-//                    catch { return 0L; }
-//                }).ToArray(),
-//                _ => processes.OrderBy(p => p.ProcessName).ToArray()
-//            };
-//        }
-//    }
-//}
-#endregion
-
-/*
- * wTpp - A simple console-based process listing tool for Windows.
- * Real-time view of processes, CPU/memory usage — no PerformanceCounter dependency.
+﻿/*
+ wTpp - A simple console-based process listing tool for Windows.
+    * This tool provides a real-time view of running processes, their CPU and memory usage,
+    * The first tool that is fully generated with AI and is designed to be simple and efficient.
  */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -564,29 +16,31 @@ using System.Threading;
 namespace Core.SystemTools
 {
     [SupportedOSPlatform("Windows")]
+
     public class ProcessListingUI
     {
-        int test = Terminal.WindowHeight; //works on main thread
-        int test2 = Terminal.WindowWidth;
+        int selectedIndex = 0;
+        int windowHeight = Console.WindowHeight - 4;
+        DateTime prevSampleTime = DateTime.UtcNow;
+        volatile bool exitRequested = false;
+        Dictionary<int, double> cpuUsages = new();
+        Dictionary<int, TimeSpan> prevCpuTimes = new();
+        PerformanceCounter cpuCounter = new("Processor", "% Processor Time", "_Total");
+        PerformanceCounter memAvailableCounter = new("Memory", "Available MBytes");
+        string searchQuery = "";
+        bool inSearchMode = false;
+        string inputPrompt = "";
+        SortMode currentSortMode = SortMode.Name;
 
-        private int selectedIndex = 0;
-        private volatile bool exitRequested = false;
-        private readonly Dictionary<int, (DateTime Time, TimeSpan CpuTime)> prevSamples = new();
-        private readonly object lockObj = new();
-
-        // Shared latest values (updated by sampling thread)
-        private double latestTotalCpuPercent;
-        private double latestMemUsedMb;
-        private double latestMemTotalMb;
-        private double latestMemPercent;
-
-        private string searchQuery = "";
-        private bool inSearchMode;
-        private SortMode currentSortMode = SortMode.Name;
+        // Shared fields updated by SampleCpuLoop
+        double latestCpuPercent = 0;
+        double latestMemPercent = 0;
+        double latestMemUsed = 0;
+        double latestMemTotal = 0;
 
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private class MEMORYSTATUSEX
+        public class MEMORYSTATUSEX
         {
             public uint dwLength;
             public uint dwMemoryLoad;
@@ -597,82 +51,83 @@ namespace Core.SystemTools
             public ulong ullTotalVirtual;
             public ulong ullAvailVirtual;
             public ulong ullAvailExtendedVirtual;
-
-            public MEMORYSTATUSEX() => dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+            public MEMORYSTATUSEX()
+            {
+                this.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+            }
         }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
+        static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 
         [DllImport("advapi32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+        static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
 
         [DllImport("advapi32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetTokenInformation(IntPtr TokenHandle, int TokenInformationClass, IntPtr TokenInformation, int TokenInformationLength, out int ReturnLength);
+        static extern bool GetTokenInformation(IntPtr TokenHandle, int TokenInformationClass, IntPtr TokenInformation, int TokenInformationLength, out int ReturnLength);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool CloseHandle(IntPtr hObject);
+        static extern bool CloseHandle(IntPtr hObject);
 
-        private const int TOKEN_QUERY = 0x0008;
-        private const int TokenUser = 1;
+        const int TOKEN_QUERY = 0x0008;
+        const int TokenUser = 1;
 
-        private (double usedMb, double totalMb, double percent) GetMemoryUsage()
+
+        (double usedMb, double totalMb, double percent) GetMemoryUsage()
         {
-            var mem = new MEMORYSTATUSEX();
-            if (GlobalMemoryStatusEx(mem))
+            MEMORYSTATUSEX memStatus = new();
+            if (GlobalMemoryStatusEx(memStatus))
             {
-                double total = mem.ullTotalPhys / 1048576.0; // MiB
-                double used = total - (mem.ullAvailPhys / 1048576.0);
-                double pct = total > 0 ? (used / total) * 100 : 0;
-                return (used, total, pct);
+                double totalMb = memStatus.ullTotalPhys / 1024.0 / 1024.0;
+                double availMb = memStatus.ullAvailPhys / 1024.0 / 1024.0;
+                double usedMb = totalMb - availMb;
+                double percent = (usedMb / totalMb) * 100;
+                return (usedMb, totalMb, percent);
             }
             return (0, 0, 0);
         }
 
+        /// <summary>
+        /// Entry point to run the process listing UI.
+        /// </summary>
         public void Run()
         {
-            //Console.CursorVisible = false;
-            Terminal.Clear();
+            Console.CursorVisible = false;
 
-            //var inputThread = new Thread(ReadInput) { IsBackground = true };
-            //var sampleThread = new Thread(SampleLoop) { IsBackground = true };
-            var renderThread = new Thread(RenderLoop) { IsBackground = true };
-
-            //inputThread.Start();
-            //sampleThread.Start();
-            renderThread.Start();
+            new Thread(ReadInput) { IsBackground = true }.Start();
+            new Thread(SampleCpuLoop) { IsBackground = true }.Start();
+            new Thread(RenderLoop) { IsBackground = true }.Start();
 
             while (!exitRequested)
-                Thread.Sleep(100);
-
-           // Console.CursorVisible = true;
-            Console.Clear();
+                Thread.Sleep(50); // keep main alive
         }
 
-        private string GetProcessUser(Process p)
+
+        string GetProcessUser(Process process)
         {
-            IntPtr token = IntPtr.Zero;
+            IntPtr tokenHandle = IntPtr.Zero;
+
             try
             {
-                if (!OpenProcessToken(p.Handle, TOKEN_QUERY, out token))
+                if (!OpenProcessToken(process.Handle, TOKEN_QUERY, out tokenHandle))
                     return "-";
 
-                int len = 0;
-                GetTokenInformation(token, TokenUser, IntPtr.Zero, 0, out len);
-                IntPtr buf = Marshal.AllocHGlobal(len);
+                int tokenInfoLength = 0;
+                GetTokenInformation(tokenHandle, TokenUser, IntPtr.Zero, 0, out tokenInfoLength);
+                IntPtr tokenInfo = Marshal.AllocHGlobal(tokenInfoLength);
 
-                if (GetTokenInformation(token, TokenUser, buf, len, out _))
-                {
-                    var sid = Marshal.ReadIntPtr(buf);
-                    var acct = new SecurityIdentifier(sid).Translate(typeof(NTAccount)).ToString();
-                    int pos = acct.IndexOf('\\');
-                    return pos >= 0 ? acct[(pos + 1)..] : acct;
-                }
-                return "-";
+                if (!GetTokenInformation(tokenHandle, TokenUser, tokenInfo, tokenInfoLength, out _))
+                    return "-";
+
+                var sid = Marshal.ReadIntPtr(tokenInfo);
+                var account = new SecurityIdentifier(sid);
+                string fullName = account.Translate(typeof(NTAccount)).ToString();
+
+                Marshal.FreeHGlobal(tokenInfo);
+
+                // Strip domain or machine name
+                int slashIndex = fullName.IndexOf('\\');
+                return slashIndex >= 0 ? fullName[(slashIndex + 1)..] : fullName;
             }
             catch
             {
@@ -680,319 +135,411 @@ namespace Core.SystemTools
             }
             finally
             {
-                if (token != IntPtr.Zero) CloseHandle(token);
+                if (tokenHandle != IntPtr.Zero)
+                    CloseHandle(tokenHandle);
             }
         }
 
-        private string GetUsageBar(double pct, int width, ConsoleColor low, ConsoleColor high, double threshold = 80)
+
+        /// <summary>
+        /// Generates a visual usage bar as a string representation, with customizable width, color, and threshold.
+        /// </summary>
+        /// <remarks>The method sets the console's foreground color based on the specified threshold and
+        /// percentage. Ensure that the console color is reset after using this method to avoid unintended color changes
+        /// in subsequent output.</remarks>
+        /// <param name="percent">The percentage value used to determine the filled portion of the bar. Must be between 0 and 100.</param>
+        /// <param name="width">The total width of the usage bar, in characters.</param>
+        /// <param name="colorLow">The console color used for the bar when <paramref name="percent"/> is below the <paramref
+        /// name="threshold"/>.</param>
+        /// <param name="colorHigh">The console color used for the bar when <paramref name="percent"/> is equal to or exceeds the <paramref
+        /// name="threshold"/>.</param>
+        /// <param name="threshold">The percentage threshold that determines whether <paramref name="colorHigh"/> or <paramref name="colorLow"/>
+        /// is applied. Defaults to 80.0.</param>
+        /// <returns>A string representing the usage bar, with the filled portion determined by <paramref name="percent"/>. The
+        /// string is padded to match the specified <paramref name="width"/>.</returns>
+        string GetUsageBar(double percent, int width, ConsoleColor colorLow, ConsoleColor colorHigh, double threshold = 80.0)
         {
-            int filled = (int)(pct * width / 100);
-            var color = pct >= threshold ? high : low;
+            int filled = (int)(percent / 100 * width);
+            var color = percent >= threshold ? colorHigh : colorLow;
+
+            var bar = new string('█', filled).PadRight(width);
+
             Console.ForegroundColor = color;
-
-            // Fixed: proper string repetition
-            string bar = new string('█', filled) + new string(' ', width - filled);
-
             return bar;
         }
 
-        private void SampleLoop()
+        /// <summary>
+        /// Continuously samples CPU and memory usage, updating the shared fields.
+        /// </summary>
+        void SampleCpuLoop()
         {
-            const int intervalMs = 1200;
-
             while (!exitRequested)
             {
-                var now = DateTime.UtcNow;
+                latestCpuPercent = cpuCounter.NextValue();
+                (latestMemUsed, latestMemTotal, latestMemPercent) = GetMemoryUsage();
+
                 var processes = Process.GetProcesses();
+                DateTime now = DateTime.UtcNow;
+                double interval = (now - prevSampleTime).TotalSeconds;
+                prevSampleTime = now;
 
-                double totalDeltaMs = 0;
-                lock (lockObj)
+                var newUsages = new Dictionary<int, double>();
+
+                foreach (var proc in processes)
                 {
-                    foreach (var p in processes)
+                    try
                     {
-                        try
+                        var cpuTime = proc.TotalProcessorTime;
+
+                        if (prevCpuTimes.TryGetValue(proc.Id, out var prevCpu))
                         {
-                            var cpu = p.TotalProcessorTime;
-                            if (prevSamples.TryGetValue(p.Id, out var prev))
-                            {
-                                double deltaSec = (cpu - prev.CpuTime).TotalSeconds;
-                                totalDeltaMs += deltaSec * 1000;
-                            }
-                            prevSamples[p.Id] = (now, cpu);
+                            var delta = (cpuTime - prevCpu).TotalSeconds;
+                            var percent = (delta / interval) / Environment.ProcessorCount * 100;
+                            newUsages[proc.Id] = Math.Max(0.0, percent);
                         }
-                        catch { }
+                        else
+                        {
+                            newUsages[proc.Id] = 0.0;
+                        }
+
+                        prevCpuTimes[proc.Id] = cpuTime;
                     }
-
-                    var live = new HashSet<int>(processes.Select(p => p.Id));
-                    foreach (var id in prevSamples.Keys.ToList())
-                        if (!live.Contains(id)) prevSamples.Remove(id);
+                    catch { }
                 }
 
-                double elapsedSec = (now - (prevSamples.Values.FirstOrDefault().Time != default ? prevSamples.Values.First().Time : now)).TotalSeconds;
-                if (elapsedSec <= 0) elapsedSec = intervalMs / 1000.0;
+                var currentIds = processes.Select(p => p.Id).ToHashSet();
+                foreach (var dead in prevCpuTimes.Keys.Except(currentIds).ToList())
+                    prevCpuTimes.Remove(dead);
 
-                double totalCpuPct = (totalDeltaMs / elapsedSec) / Environment.ProcessorCount;
+                cpuUsages = newUsages;
 
-                var mem = GetMemoryUsage();
-
-                lock (lockObj)
-                {
-                    latestTotalCpuPercent = totalCpuPct;
-                    latestMemUsedMb = mem.usedMb;
-                    latestMemTotalMb = mem.totalMb;
-                    latestMemPercent = mem.percent;
-                }
-
-                Thread.Sleep(intervalMs);
+                Thread.Sleep(1000); // sampling interval
             }
         }
 
-        private void ReadInput()
+        void ClearSeach()
+        {
+            inSearchMode = false;
+            searchQuery = "";
+            inputPrompt = "";
+            var processes = Process.GetProcesses()
+.OrderBy(p => p.ProcessName)
+.ToArray();
+
+            int maxDisplay = Console.WindowHeight - 6; // Reserve lines for title + bars + header
+            int visibleCount = Math.Min(maxDisplay, processes.Length);
+            // --- Clear any leftover lines below the list ---
+            for (int i = visibleCount; i < maxDisplay; i++)
+            {
+                Console.SetCursorPosition(0, i + 5);
+                Console.Write(new string(' ', Console.WindowWidth - 1));
+            }
+
+            // --- Clear the bottom line (search prompt area) ---
+            Console.SetCursorPosition(0, Console.WindowHeight - 1);
+            Console.Write(new string(' ', Console.WindowWidth - 1));
+        }
+
+        /// <summary>
+        /// Continuously reads user input from the console and processes it to control application behavior.
+        /// </summary>
+        /// <remarks>This method listens for key presses and performs actions based on the input. It
+        /// supports navigation using the arrow keys, process termination with the 'K' key, and application exit with
+        /// the 'Q' key. The method runs in a loop until the exit condition is triggered.</remarks>
+        void ReadInput()
         {
             while (!exitRequested)
             {
                 if (!Console.KeyAvailable)
                 {
-                    Thread.Sleep(30);
+                    Thread.Sleep(10);
                     continue;
                 }
 
-                var k = Console.ReadKey(intercept: true);
+                var keyInfo = Console.ReadKey(true);
 
                 if (inSearchMode)
                 {
-                    if (k.Key == ConsoleKey.Enter)
+                    if (keyInfo.Key == ConsoleKey.Enter)
                     {
-                        SearchAndSelect(searchQuery.Trim());
-                        inSearchMode = false;
-                        searchQuery = "";
+                        SearchAndScrollToProcess(searchQuery.Trim());
+                        ClearSeach();
                     }
-                    else if (k.Key == ConsoleKey.Escape)
+                    else if (keyInfo.Key == ConsoleKey.Escape)
                     {
-                        inSearchMode = false;
-                        searchQuery = "";
+                        ClearSeach();
                     }
-                    else if (k.Key == ConsoleKey.Backspace && searchQuery.Length > 0)
+                    else if (keyInfo.Key == ConsoleKey.Backspace && searchQuery.Length > 0)
                     {
                         searchQuery = searchQuery[..^1];
                     }
-                    else if (char.IsLetterOrDigit(k.KeyChar) || char.IsWhiteSpace(k.KeyChar) || k.KeyChar == '-')
+                    else if (keyInfo.KeyChar != '\u0000')
                     {
-                        searchQuery += k.KeyChar;
+                        searchQuery += keyInfo.KeyChar;
                     }
+
+                    RenderSearchPrompt();
                     continue;
                 }
 
-                switch (k.Key)
+                switch (keyInfo.Key)
                 {
-                    case ConsoleKey.UpArrow: if (selectedIndex > 0) selectedIndex--; break;
-                    case ConsoleKey.DownArrow: selectedIndex++; break;
-                    case ConsoleKey.PageUp: selectedIndex -= 10; if (selectedIndex < 0) selectedIndex = 0; break;
-                    case ConsoleKey.PageDown: selectedIndex += 10; break;
-                    case ConsoleKey.Home: selectedIndex = 0; break;
-                    case ConsoleKey.End: selectedIndex = int.MaxValue; break;
-
-                    case ConsoleKey.K: KillSelected(); break;
-                    case ConsoleKey.Q: exitRequested = true; break;
-
-                    case ConsoleKey.C: currentSortMode = SortMode.CPU; break;
-                    case ConsoleKey.M: currentSortMode = SortMode.Memory; break;
-                    case ConsoleKey.N: currentSortMode = SortMode.Name; break;
-
-                    case ConsoleKey.Oem2:       // /  (and ? with shift on US keyboard)
+                    case ConsoleKey.UpArrow:
+                        if (selectedIndex > 0) selectedIndex--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        selectedIndex++;
+                        break;
+                    case ConsoleKey.K:
+                        KillSelectedProcess();
+                        break;
+                    case ConsoleKey.Q:
+                        exitRequested = true;
+                        Terminal.Clear();
+                        Console.CursorVisible = true;
+                        break;
+                    case ConsoleKey.M:
+                        currentSortMode = SortMode.Memory;
+                        break;
+                    case ConsoleKey.C:
+                        currentSortMode = SortMode.CPU;
+                        break;
+                    case ConsoleKey.N: // Sort by Name
+                        currentSortMode = SortMode.Name;
+                        break;
+                    case ConsoleKey.Oem2: // '/' key
                         inSearchMode = true;
                         searchQuery = "";
+                        RenderSearchPrompt();
+
+
+                        Console.SetCursorPosition(0, Console.WindowHeight - 1);
+                        Console.Write((inputPrompt ?? "").PadRight(Console.WindowWidth - 1));
+                        Console.ResetColor();
                         break;
                 }
             }
         }
 
-        private void SearchAndSelect(string query)
+        /// <summary>
+        /// Searches for a process by name and scrolls to its position in the list.
+        /// </summary>
+        /// <remarks>If a matching process is found, its index is selected. If no match is found,  a
+        /// message is displayed in the console indicating that no process matches the query.</remarks>
+        /// <param name="query">The case-insensitive substring to search for in process names.</param>
+        void SearchAndScrollToProcess(string query)
         {
-            if (string.IsNullOrWhiteSpace(query)) return;
+            var processes = GetSortedProcesses();
 
-            var procs = GetSortedProcesses();
-            for (int i = 0; i < procs.Length; i++)
+            for (int i = 0; i < processes.Length; i++)
             {
-                if (procs[i].ProcessName.Contains(query, StringComparison.OrdinalIgnoreCase))
+                try
                 {
-                    selectedIndex = i;
-                    return;
+                    if (processes[i].ProcessName.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+                    {
+                        selectedIndex = i;
+                        return;
+                    }
                 }
+                catch { }
             }
         }
 
-        private void KillSelected()
+        /// <summary>
+        /// Renders a search prompt at the bottom of the console window.
+        /// </summary>
+        /// <remarks>The search prompt is displayed in yellow text and includes the current search query.
+        /// The prompt is padded to fill the width of the console window.</remarks>
+        void RenderSearchPrompt()
+        {
+            inputPrompt = inSearchMode ? "/" + searchQuery : "";
+        }
+
+
+        /// <summary>
+        /// Terminates the process selected by the user.
+        /// </summary>
+        /// <remarks>This method retrieves all currently running processes, orders them by name, and
+        /// attempts to terminate  the process at the specified index. If the process is successfully terminated, the
+        /// method waits for  up to 2 seconds for the process to exit.</remarks>
+        void KillSelectedProcess()
         {
             try
             {
-                var procs = GetSortedProcesses();
-                if (selectedIndex >= 0 && selectedIndex < procs.Length)
+                var processes = GetSortedProcesses();
+
+                if (selectedIndex >= 0 && selectedIndex < processes.Length)
                 {
-                    procs[selectedIndex].Kill();
-                    procs[selectedIndex].WaitForExit(1500);
+                    var proc = processes[selectedIndex];
+                    proc.Kill();
+                    proc.WaitForExit(2000); // wait max 2 seconds for process to exit
                 }
             }
-            catch { }
+            catch
+            {
+                // Optional: display an error somewhere or ignore if access denied
+            }
         }
 
-        private void RenderLoop()
+        /// <summary>
+        /// Continuously renders the process list and system resource usage in the console. 
+        /// </summary>
+        void RenderLoop()
         {
             while (!exitRequested)
             {
-                int h = Terminal.WindowHeight; // hangs here ?? why 
+                var processes = Process.GetProcesses();
 
-                int w = Console.WindowWidth;
-                
-                if (w < 60 || h < 15) { Thread.Sleep(500); continue; }
-
-                int listAreaHeight = h - 7;
-
-                var sorted = GetSortedProcesses();
-                int count = sorted.Length;
-                selectedIndex = Math.Clamp(selectedIndex, 0, count - 1);
-
-                int pageSize = Math.Max(5, listAreaHeight);
-                int startIdx = Math.Max(0, selectedIndex - pageSize / 2);
-                startIdx = Math.Min(startIdx, Math.Max(0, count - pageSize));
-
-                double cpuPct, memPct, memUsed, memTot;
-                lock (lockObj)
+                switch (currentSortMode)
                 {
-                    cpuPct = latestTotalCpuPercent;
-                    memUsed = latestMemUsedMb;
-                    memTot = latestMemTotalMb;
-                    memPct = latestMemPercent;
+                    case SortMode.CPU:
+                        processes = processes.OrderByDescending(p => cpuUsages.TryGetValue(p.Id, out var cpu) ? cpu : 0).ToArray();
+                        break;
+                    case SortMode.Memory:
+                        processes = processes.OrderByDescending(p =>
+                        {
+                            try { return p.PrivateMemorySize64; }
+                            catch { return 0L; }
+                        }).ToArray();
+                        break;
+                    default:
+                        processes = processes.OrderBy(p => p.ProcessName).ToArray();
+                        break;
                 }
 
-                Console.SetCursorPosition(0, 0);
-                Console.Write(new string(' ', w));
+                var processArray = processes.ToArray();
 
+                int maxDisplay = Console.WindowHeight - 6; // Reserve lines for title + bars + header
+                int visibleCount = Math.Min(maxDisplay, processes.Length);
+                int start = Math.Clamp(selectedIndex - visibleCount / 2, 0, processes.Length - visibleCount);
+
+                double cpuPercent = cpuCounter.NextValue(); // total CPU %
+                (double memUsed, double memTotal, double memPercent) = GetMemoryUsage();
+
+                // --- Draw Title ---
+                Console.SetCursorPosition(0, 0);
+                Console.Write(new string(' ', Console.WindowWidth)); // clear line 0
                 Console.SetCursorPosition(0, 0);
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write($"wTop  ↑↓=nav  Q=quit  K=kill  / =search  C=CPU  M=Mem  N=Name  Sort: {currentSortMode,-6}");
+                Console.Write($"WTop - ↑/↓ navigate | 'Q' quit | 'K' kill | '/' search | 'C'=CPU 'M'=Mem 'N'=Name | Sort: {currentSortMode}".PadRight(Console.WindowWidth - 1));
                 Console.ResetColor();
 
-                // CPU
+                // --- Draw CPU Bar ---
                 Console.SetCursorPosition(0, 1);
-                Console.Write(new string(' ', w));
+                Console.Write(new string(' ', Console.WindowWidth)); // clear line 1
                 Console.SetCursorPosition(0, 1);
-                Console.Write("CPU ");
-                Console.Write(GetUsageBar(cpuPct, 40, ConsoleColor.Green, ConsoleColor.Red));
+                Console.Write("CPU: ");
+                string cpuBar = GetUsageBar(cpuPercent, 30, ConsoleColor.Green, ConsoleColor.Red);
+                Console.Write(cpuBar);
                 Console.ResetColor();
-                Console.Write($" {cpuPct,5:0.0}%");
+                Console.Write($" {cpuPercent:0.0}%".PadLeft(7));
 
-                // MEM
+                // --- Draw Memory Bar ---
                 Console.SetCursorPosition(0, 2);
-                Console.Write(new string(' ', w));
+                Console.Write(new string(' ', Console.WindowWidth)); // clear line 2
                 Console.SetCursorPosition(0, 2);
-                Console.Write("MEM ");
-                Console.Write(GetUsageBar(memPct, 40, ConsoleColor.Yellow, ConsoleColor.Red));
+                Console.Write("MEM: ");
+                string memBar = GetUsageBar(memPercent, 30, ConsoleColor.Yellow, ConsoleColor.Red);
+                Console.Write(memBar);
                 Console.ResetColor();
-                Console.Write($" {memUsed,6:0} / {memTot,6:0} MB  ({memPct,5:0.0}%)");
+                Console.Write($" {memUsed:0.0}MB / {memTotal:0.0}MB ({memPercent:0.0}%)".PadLeft(25));
 
+                // --- Blank line ---
                 Console.SetCursorPosition(0, 3);
-                Console.Write(new string(' ', w));
+                Console.Write(new string(' ', Console.WindowWidth)); // clear line 3
 
-                // Header
+                // --- Draw process header ---
                 Console.SetCursorPosition(0, 4);
-                Console.BackgroundColor = ConsoleColor.DarkGray;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"{"PID",6} {"Name",-28} {"CPU%",7} {"Mem MB",9} {"Thrds",7} {"User",-15}");
+                Console.Write(new string(' ', Console.WindowWidth)); // clear line 4
+                Console.SetCursorPosition(0, 4);
+                Console.BackgroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write($"{"PID",5} {"Name",-25} {"CPU%",6} {"Mem(MB)",8} {"Threads",8} {"User",-15}".PadRight(Console.WindowWidth - 1));
                 Console.ResetColor();
 
-                // List
-                for (int i = 0; i < pageSize; i++)
+                // --- Draw process list ---
+                for (int i = 0; i < visibleCount; i++)
                 {
-                    int row = 5 + i;
-                    Console.SetCursorPosition(0, row);
-                    Console.Write(new string(' ', w));
-
-                    if (startIdx + i >= count) continue;
-
-                    var p = sorted[startIdx + i];
-                    bool selected = (startIdx + i == selectedIndex);
-
+                    int index = start + i;
+                    var proc = processes[index];
                     string line;
+
                     try
                     {
-                        double cpu = 0;
-                        lock (lockObj)
-                        {
-                            if (prevSamples.TryGetValue(p.Id, out var s))
-                            {
-                                var delta = (p.TotalProcessorTime - s.CpuTime).TotalSeconds;
-                                cpu = (delta * 100) / ((DateTime.UtcNow - s.Time).TotalSeconds * Environment.ProcessorCount);
-                                cpu = Math.Clamp(cpu, 0, 999);
-                            }
-                        }
-
-                        double memMb = p.PrivateMemorySize64 / 1048576.0;
-                        string user = Truncate(GetProcessUser(p), 14);
-                        line = $"{p.Id,6} {Truncate(p.ProcessName, 27),-28} {cpu,7:0.0} {memMb,9:0} {p.Threads.Count,7} {user,-15}";
+                        var cpu = cpuUsages.TryGetValue(proc.Id, out var value) ? value : 0.0;
+                        var mem = proc.PrivateMemorySize64 / 1024.0 / 1024.0;
+                        //string title = string.IsNullOrWhiteSpace(proc.MainWindowTitle) ? "-" : Truncate(proc.MainWindowTitle, 25);
+                        string user = Truncate(GetProcessUser(proc), 15);
+                        line = $"{proc.Id,5} {Truncate(proc.ProcessName, 25),-25} {cpu,6:0.0} {mem,8:0.0} {proc.Threads.Count,8} {user,-15}";
                     }
                     catch
                     {
-                        line = $"{p.Id,6} {"<denied>",-28} {"n/a",7} {"n/a",9} {"n/a",7}";
+                        line = $"{proc.Id,5} {"<Access Denied>",-25} {"0.0",6} {"N/A",8} {"N/A",8}";
                     }
 
-                    Console.SetCursorPosition(0, row);
-                    if (selected)
+                    Console.SetCursorPosition(0, i + 5);
+                    if (index == selectedIndex)
                     {
                         Console.BackgroundColor = ConsoleColor.DarkBlue;
                         Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write(line.PadRight(Console.WindowWidth - 1));
+                        Console.ResetColor();
                     }
-                    Console.Write(line.PadRight(w - 1));
-                    Console.ResetColor();
+                    else
+                    {
+                        Console.Write(line.PadRight(Console.WindowWidth - 1));
+                    }
                 }
 
-                // Bottom
-                Console.SetCursorPosition(0, h - 1);
-                Console.Write(new string(' ', w));
-                Console.SetCursorPosition(0, h - 1);
-                if (inSearchMode)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write($"/{searchQuery}");
-                    Console.ResetColor();
-                }
+                // --- Draw the search text ---
+                Console.SetCursorPosition(0, Console.WindowHeight - 1);
+                Console.Write((inputPrompt ?? "").PadRight(Console.WindowWidth - 1));
+                Console.ResetColor();
 
-                Thread.Sleep(180);
+                // --- Refresh rate ---
+                Thread.Sleep(150);
             }
         }
 
-        private Process[] GetSortedProcesses()
+        double SafeGetMemory(Process p)
         {
-            var procs = Process.GetProcesses();
+            try { return p.PrivateMemorySize64; }
+            catch { return 0; }
+        }
+
+        /// <summary>
+        /// Truncates the specified string to a maximum length, appending "..." if truncation occurs.
+        /// </summary>
+        /// <param name="value">The string to be truncated. Cannot be <see langword="null"/>.</param>
+        /// <param name="maxLength">The maximum allowed length of the resulting string. Must be greater than 3.</param>
+        /// <returns>The original string if its length is less than or equal to <paramref name="maxLength"/>;  otherwise, a
+        /// truncated version of the string with "..." appended.</returns>
+        string Truncate(string value, int maxLength)
+        {
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength - 3) + "...";
+        }
+
+        enum SortMode
+        {
+            Name,
+            Memory,
+            CPU
+        }
+
+        Process[] GetSortedProcesses()
+        {
+            var processes = Process.GetProcesses();
 
             return currentSortMode switch
             {
-                SortMode.CPU => procs
-                    .OrderByDescending(p =>
-                    {
-                        lock (lockObj)
-                        {
-                            if (prevSamples.TryGetValue(p.Id, out var s))
-                                return (p.TotalProcessorTime - s.CpuTime).TotalSeconds;
-                            return 0;
-                        }
-                    })
-                    .ToArray(),
-
-                SortMode.Memory => procs
-                    .OrderByDescending(p => { try { return p.PrivateMemorySize64; } catch { return 0L; } })
-                    .ToArray(),
-
-                _ => procs.OrderBy(p => p.ProcessName).ToArray()
+                SortMode.CPU => processes.OrderByDescending(p => cpuUsages.TryGetValue(p.Id, out var cpu) ? cpu : 0).ToArray(),
+                SortMode.Memory => processes.OrderByDescending(p =>
+                {
+                    try { return p.PrivateMemorySize64; }
+                    catch { return 0L; }
+                }).ToArray(),
+                _ => processes.OrderBy(p => p.ProcessName).ToArray()
             };
         }
-
-        private static string Truncate(string s, int max)
-        {
-            if (s.Length <= max) return s;
-            return s.Substring(0, max - 3) + "...";
-        }
-
-        private enum SortMode { Name, CPU, Memory }
     }
 }

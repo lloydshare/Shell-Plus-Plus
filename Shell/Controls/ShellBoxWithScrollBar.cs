@@ -13,6 +13,21 @@ namespace Editor.Controls
         public ShellBox ShellBox { get; }
         private DarkScrollBar vScrollBar;
 
+        // New property to control scroll bar visibility
+        private bool _scrollBarVisible = true;
+        public bool ScrollBarVisible
+        {
+            get => _scrollBarVisible;
+            set
+            {
+                if (_scrollBarVisible != value)
+                {
+                    _scrollBarVisible = value;
+                    UpdateScrollBar();
+                }
+            }
+        }
+
         private const int EM_GETLINECOUNT = 0xBA;
         private const int EM_LINESCROLL = 0xB6;
         private const int EM_GETFIRSTVISIBLELINE = 0xCE;
@@ -37,7 +52,6 @@ namespace Editor.Controls
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int SendMessage(IntPtr hWnd, int msg, int wParam, int lParam);
         //private static extern IntPtr SendMessage2(HandleRef hWnd, int msg, IntPtr wParam, ref RECT lParam);
-
 
         public ShellBoxWithScrollBar()
         {
@@ -79,7 +93,7 @@ namespace Editor.Controls
             //Debug.WriteLine(string.Format("linecount:{0} visablelines:{1}",
              //   lineCount, visibleLines));
 
-            if (lineCount > visibleLines)
+            if (lineCount > visibleLines && _scrollBarVisible)
             {
                 vScrollBar.Minimum = 0;
                 vScrollBar.Maximum = lineCount - 1;

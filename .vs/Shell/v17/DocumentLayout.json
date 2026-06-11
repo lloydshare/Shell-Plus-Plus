@@ -3,24 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5ED06CAD-956C-C94D-BC0C-E89E30A887C2}|Core\\Core.csproj|c:\\users\\lloyd\\source\\repos\\shell\\core\\systemtools\\processlistingui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ED06CAD-956C-C94D-BC0C-E89E30A887C2}|Core\\Core.csproj|solutionrelative:core\\systemtools\\processlistingui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|C:\\Users\\Lloyd\\source\\repos\\Shell\\shell\\skin\\properties.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|solutionrelative:shell\\skin\\properties.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5ED06CAD-956C-C94D-BC0C-E89E30A887C2}|Core\\Core.csproj|c:\\users\\lloyd\\source\\repos\\shell\\core\\terminal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5ED06CAD-956C-C94D-BC0C-E89E30A887C2}|Core\\Core.csproj|solutionrelative:core\\terminal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|c:\\users\\lloyd\\source\\repos\\shell\\shell\\skin\\properties.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|solutionrelative:shell\\skin\\properties.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{946C372F-1463-01F5-14DA-5DD05B590145}|Commands\\Commands.csproj|c:\\users\\lloyd\\source\\repos\\shell\\commands\\terminalcommands\\games\\snake.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{946C372F-1463-01F5-14DA-5DD05B590145}|Commands\\Commands.csproj|solutionrelative:commands\\terminalcommands\\games\\snake.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|c:\\users\\lloyd\\source\\repos\\shell\\shell\\shellfrm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|solutionrelative:shell\\shellfrm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|c:\\users\\lloyd\\source\\repos\\shell\\shell\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{661BB0CA-B98F-4F4E-83BD-66FA6D30F36B}|Shell\\Shell.csproj|solutionrelative:shell\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{946C372F-1463-01F5-14DA-5DD05B590145}|Commands\\Commands.csproj|c:\\users\\lloyd\\source\\repos\\shell\\commands\\terminalcommands\\consolesystem\\wtop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{946C372F-1463-01F5-14DA-5DD05B590145}|Commands\\Commands.csproj|solutionrelative:commands\\terminalcommands\\consolesystem\\wtop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,71 +26,57 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Terminal.cs",
-              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Terminal.cs",
-              "RelativeDocumentMoniker": "Core\\Terminal.cs",
-              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Terminal.cs",
-              "RelativeToolTip": "Core\\Terminal.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAJAAAAAAAAAA==",
+              "Title": "Properties.cs",
+              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Skin\\Properties.cs",
+              "RelativeDocumentMoniker": "Shell\\Skin\\Properties.cs",
+              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Skin\\Properties.cs",
+              "RelativeToolTip": "Shell\\Skin\\Properties.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-22T23:25:50.107Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ProcessListingUI.cs",
-              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\SystemTools\\ProcessListingUI.cs",
-              "RelativeDocumentMoniker": "Core\\SystemTools\\ProcessListingUI.cs",
-              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\SystemTools\\ProcessListingUI.cs",
-              "RelativeToolTip": "Core\\SystemTools\\ProcessListingUI.cs",
-              "ViewState": "AgIAADwDAAAAAAAAAAAtwEYDAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-22T22:48:07.93Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "WTop.cs",
-              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\TerminalCommands\\ConsoleSystem\\WTop.cs",
-              "RelativeDocumentMoniker": "Commands\\TerminalCommands\\ConsoleSystem\\WTop.cs",
-              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\TerminalCommands\\ConsoleSystem\\WTop.cs",
-              "RelativeToolTip": "Commands\\TerminalCommands\\ConsoleSystem\\WTop.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAgwBoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-22T22:43:12.228Z",
+              "WhenOpened": "2026-05-17T15:01:40.764Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Snake.cs",
+              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\TerminalCommands\\Games\\Snake.cs",
+              "RelativeDocumentMoniker": "Commands\\TerminalCommands\\Games\\Snake.cs",
+              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\TerminalCommands\\Games\\Snake.cs",
+              "RelativeToolTip": "Commands\\TerminalCommands\\Games\\Snake.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:54:20.553Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Properties.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Skin\\Properties.cs",
+              "RelativeDocumentMoniker": "Shell\\Skin\\Properties.cs",
+              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Skin\\Properties.cs [Design]",
+              "RelativeToolTip": "Shell\\Skin\\Properties.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:53:02.423Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "ShellFrm.cs",
               "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\ShellFrm.cs",
               "RelativeDocumentMoniker": "Shell\\ShellFrm.cs",
               "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\ShellFrm.cs",
               "RelativeToolTip": "Shell\\ShellFrm.cs",
-              "ViewState": "AgIAAFABAAAAAAAAAAAUwGYBAABMAAAAAAAAAA==",
+              "ViewState": "AgIAABcAAAAAAAAAAAAQwBkAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-19T08:51:19.188Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Program.cs",
-              "RelativeDocumentMoniker": "Shell\\Program.cs",
-              "ToolTip": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Program.cs",
-              "RelativeToolTip": "Shell\\Program.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAAcwEQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-22T22:02:38.283Z",
+              "WhenOpened": "2026-05-17T14:51:59.852Z",
               "EditorCaption": ""
             }
           ]

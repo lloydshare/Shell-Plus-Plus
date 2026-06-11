@@ -31,12 +31,12 @@ namespace Commands.TerminalCommands.Games
         private static void Main()
         {
             _run = true;
-            Console.CursorVisible = false;
+            Terminal.CursorVisible = false;
             Terminal.Clear();
-            _display = new DisplayElement[Console.WindowWidth - 2][];
+            _display = new DisplayElement[Terminal.WindowWidth - 2][];
             for (var item = 0; item < _display.Length; item++)
             {
-                var widthCol = new DisplayElement[Console.WindowHeight - 2];
+                var widthCol = new DisplayElement[Terminal.WindowHeight - 2];
                 for (var i = 0; i < widthCol.Length; i++)
                 {
                     widthCol[i] = new DisplayElement { Value = Empty, Point = new Point(item, i) };
@@ -49,10 +49,10 @@ namespace Commands.TerminalCommands.Games
             GenFood();
             _snake = new List<Point>
             {
-                new Point(_display.Length / 2 - 3, (Console.WindowHeight - 2) / 2),
-                new Point(_display.Length / 2 - 2, (Console.WindowHeight - 2) / 2),
-                new Point(_display.Length / 2 - 1, (Console.WindowHeight - 2) / 2),
-                new Point(_display.Length / 2, (Console.WindowHeight - 2) / 2),
+                new Point(_display.Length / 2 - 3, (Terminal.WindowHeight - 2) / 2),
+                new Point(_display.Length / 2 - 2, (Terminal.WindowHeight - 2) / 2),
+                new Point(_display.Length / 2 - 1, (Terminal.WindowHeight - 2) / 2),
+                new Point(_display.Length / 2, (Terminal.WindowHeight - 2) / 2),
             };
             foreach (var item in _snake)
             {

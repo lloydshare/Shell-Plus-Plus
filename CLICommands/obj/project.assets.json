@@ -649,6 +649,15 @@
         "frameworkReferences": [
           "Microsoft.WindowsDesktop.App.WindowsForms"
         ]
+      },
+      "Granados/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Granados.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Granados.dll": {}
+        }
       }
     }
   },
@@ -1660,11 +1669,17 @@
       "type": "project",
       "path": "../Core/Core.csproj",
       "msbuildProject": "../Core/Core.csproj"
+    },
+    "Granados/1.0.0": {
+      "type": "project",
+      "path": "../Granados/Granados.csproj",
+      "msbuildProject": "../Granados/Granados.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0-windows7.0": [
-      "Commands >= 1.0.0"
+      "Commands >= 1.0.0",
+      "Granados >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1673,11 +1688,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj",
+      "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj",
       "projectName": "CLINETCommands",
-      "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj",
+      "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj",
       "packagesPath": "C:\\Users\\Lloyd\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\obj\\",
+      "outputPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Lloyd\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1694,8 +1709,11 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows7.0",
           "projectReferences": {
-            "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj": {
-              "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj"
+            "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj": {
+              "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj"
+            },
+            "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj": {
+              "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj"
             }
           }
         }
@@ -1731,7 +1749,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

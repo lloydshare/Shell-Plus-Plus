@@ -346,6 +346,33 @@ namespace Core
             return ConsoleToDrawing.TryGetValue(color, out var c) ? c : Color.White;
         }
 
+        private static readonly Dictionary<Color, ConsoleColor> DrawingToConsole = new()
+        {
+    { Color.Black,       ConsoleColor.Black },
+    { Color.FromArgb(0, 0, 139),    ConsoleColor.DarkBlue },
+    { Color.FromArgb(0, 100, 0),   ConsoleColor.DarkGreen },
+    { Color.FromArgb(0, 139, 139),    ConsoleColor.DarkCyan },
+    { Color.FromArgb(139, 0, 0),     ConsoleColor.DarkRed },
+    { Color.FromArgb(139, 0, 139), ConsoleColor.DarkMagenta },
+    { Color.FromArgb(139, 139, 0),  ConsoleColor.DarkYellow },
+    { Color.Gray,        ConsoleColor.Gray },
+    { Color.FromArgb(169, 169, 169),    ConsoleColor.DarkGray },
+    { Color.Blue,        ConsoleColor.Blue },
+    { Color.Lime,       ConsoleColor.Green },
+    { Color.Cyan,        ConsoleColor.Cyan },
+    { Color.Red,         ConsoleColor.Red },
+    { Color.Magenta,     ConsoleColor.Magenta },
+    { Color.Yellow,      ConsoleColor.Yellow },
+    { Color.White,       ConsoleColor.White }
+        };
+
+        public static ConsoleColor DrawingColorToConsoleColor(Color color)
+        {
+            return DrawingToConsole.TryGetValue(color, out var c) ? c : ConsoleColor.White;
+        }
+
+
+
 
         /// <summary>
         /// Check write permission to a directory or file.
@@ -402,20 +429,11 @@ namespace Core
         /// <param name="text"></param>
         public static void ErrorWriteLine(object data)
         {
-            ConsoleColor currentForeground = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
+            ConsoleColor currentForeground = Terminal.ForegroundColor;
+            Terminal.ForegroundColor = ConsoleColor.Red;
             Console.Error.WriteLine($"Error: {data}");
-            Console.ForegroundColor = currentForeground;
+            Terminal.ForegroundColor = currentForeground;
 
-            ////todo theme load colors
-            //FileSystem.ColorConsoleText(ConsoleColor.DarkRed, "ERROR ");
-            //FileSystem.ColorConsoleText(ConsoleColor.DarkGray, ":: ");
-            //FileSystem.ColorConsoleText(ConsoleColor.DarkRed, Class);
-            //FileSystem.ColorConsoleText(ConsoleColor.DarkGray, " :: ");
-            //FileSystem.ColorConsoleText(ConsoleColor.Cyan, Method);
-            //FileSystem.ColorConsoleText(ConsoleColor.DarkGray, " :: ");
-            //FileSystem.ColorConsoleText(ConsoleColor.White, ErrorMessage);
-            //Console.WriteLine("");
         }
 
         /// <summary>
@@ -427,7 +445,7 @@ namespace Core
         {
             var consoleC = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), GlobalVariables.successColorOutput, true);
             ConsoleColor currentForeground = Console.ForegroundColor;
-            Console.ForegroundColor =consoleC;
+            Console.ForegroundColor = consoleC;
             Console.WriteLine(data);
             Console.ForegroundColor = currentForeground;
         }

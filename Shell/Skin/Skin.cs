@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
+using static CustomForm.PS;
 #pragma warning disable CS8765
 #endregion
 
@@ -286,6 +287,17 @@ namespace CustomForm
         [Description("Specifies the DWM system backdrop type (Mica, Acrylic, etc) for Windows 11+.")]
         public DWM_SYSTEMBACKDROP_TYPE SystemBackdropType { get; set; } = DWM_SYSTEMBACKDROP_TYPE.DWMSBT_TRANSIENTWINDOW;
 
+        [Category("Security")]
+        [Description("PS enabled flag")]
+        public bool ps_en { get; set; } = true;
+
+        [Category("Security")]
+        [Description("PS attr")]
+        public WDA_ATTRIBUTE wda_attr { get; set; } = WDA_ATTRIBUTE.WDA_MONITOR;
+
+        [Category("Appearance")]
+        [Description("Shows or Hides the status bar")]
+        public bool StatusBarEnabled { get; set; } = false;
         #endregion
 
         #region Private Objects

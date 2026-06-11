@@ -1,0 +1,141 @@
+﻿using System;
+using System.Collections.Concurrent;
+using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+public static class Terminal
+{
+    //public static int SafeWindowHeight
+    //{
+    //    get
+    //    {
+    //        // 'this' is not valid in a static context. You need a reference to the relevant Form or Control.
+    //        // For demonstration, let's assume you have a static property to get the main Form:
+    //        var mainForm = Application.OpenForms.Count > 0 ? Application.OpenForms[0] : null;
+    //        if (mainForm == null)
+    //            return 0;
+
+    //        if (mainForm.InvokeRequired)
+    //        {
+    //            return (int)mainForm.Invoke(new Func<int>(() => mainForm.Height));
+    //        }
+    //        else
+    //        {
+    //            return mainForm.Height;
+    //        }
+    //    }
+    //}
+
+    private static readonly BlockingCollection<Action> _mainThreadQueue = new();
+
+    // Start a dispatcher loop on the main thread
+    static Terminal()
+    {
+        Task.Run(() =>
+        {
+            foreach (var action in _mainThreadQueue.GetConsumingEnumerable())
+            {
+                action();
+            }
+        });
+    }
+
+    public static int WindowHeight
+    {
+        get
+        {
+            var getHeight = AppDomain.CurrentDomain.GetData("WindowHeight") as Func<int>;
+            if (getHeight == null) return 0;
+
+            // Avoid deadlock: do NOT block on Task.Result if already on main thread or if main thread is blocked
+            if (Thread.CurrentThread.ManagedThreadId == 1)
+                return getHeight();
+
+            // Try to post to the main UI thread using SynchronizationContext if available
+            var context = SynchronizationContext.Current;
+            if (context != null)
+            {
+                int result = 0;
+                Exception ex = null;
+                context.Send(_ =>
+                {
+                    try { result = getHeight(); }
+                    catch (Exception e) { ex = e; }
+                }, null);
+                if (ex != null) throw ex;
+                return result;
+            }
+
+            // Fallback: use the queue, but warn this may hang if main thread is not pumping
+            var tcs = new TaskCompletionSource<int>();
+            _mainThreadQueue.Add(() =>
+            {
+                try { tcs.SetResult(getHeight()); }
+                catch (Exception ex2) { tcs.SetException(ex2); }
+            });
+            return tcs.Task.Result;
+        }
+    }
+
+    // Helper to invoke on main thread and get result
+    public static T InvokeOnMainThread<T>(Func<T> func)
+    {
+        if (Thread.CurrentThread.ManagedThreadId == 1) // Already on main thread
+            return func();
+
+        var tcs = new TaskCompletionSource<T>();
+        _mainThreadQueue.Add(() =>
+        {
+            try { tcs.SetResult(func()); }
+            catch (Exception ex) { tcs.SetException(ex); }
+        });
+        return tcs.Task.Result;
+    }
+
+    public static int WindowWidth = (AppDomain.CurrentDomain.GetData("WindowWidth") as Func<int>).Invoke();
+
+    //public static int WindowHeight()
+    //{
+    //    var getHeight = AppDomain.CurrentDomain.GetData("WindowHeight") as Func<int>;
+    //    return getHeight?.Invoke() ?? 0;
+    //}
+
+    public static void AddControl(Control control)
+    {
+        var addControl = AppDomain.CurrentDomain.GetData("AddControl") as Action<Control>;
+        addControl?.Invoke(control);
+    }
+
+
+    public static void Clear()
+    {
+        (AppDomain.CurrentDomain.GetData("ClearConsole") as Action)?.Invoke();
+    }
+
+    public static Color GetConsoleTextColor()
+    {
+        var getColor = AppDomain.CurrentDomain.GetData("GetConsoleTextColor") as Func<Color>;
+        return getColor?.Invoke() ?? Color.White; // default fallback
+    }
+
+    public static void SetConsoleTextColor(Color color)
+    {
+        var setColor = AppDomain.CurrentDomain.GetData("SetConsoleTextColor") as Action<Color>;
+        setColor?.Invoke(color); 
+    }
+
+    public static void ClearLine()
+    {
+        ((Action)AppDomain.CurrentDomain.GetData("ClearLine"))?.Invoke();
+    }
+
+    public static void ProcessMainThreadQueue()
+    {
+        while (_mainThreadQueue.TryTake(out var action, TimeSpan.Zero))
+        {
+            action();
+        }
+    }
+}

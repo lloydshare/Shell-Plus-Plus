@@ -1,0 +1,30 @@
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.csproj.AssemblyReference.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.strings.resources
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.strings_ja.resources
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.csproj.GenerateResource.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.csproj.CoreCompileInputs.cache
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\Debug\Granados.XML
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\Debug\Granados.dll
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\bin\Debug\Granados.pdb
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.dll
+C:\Users\Lloyd\Desktop\poderosa-4.8.1-src\poderosa-4.8.1\Granados\obj\Debug\Granados.pdb
+C:\Users\Lloyd\source\repos\ssh test 2\bin\Debug\Granados.XML
+C:\Users\Lloyd\source\repos\ssh test 2\bin\Debug\Granados.dll
+C:\Users\Lloyd\source\repos\ssh test 2\bin\Debug\Granados.pdb
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.csproj.AssemblyReference.cache
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.strings.resources
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.strings_ja.resources
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.csproj.GenerateResource.cache
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.csproj.CoreCompileInputs.cache
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.dll
+C:\Users\Lloyd\source\repos\ssh test 2\Granados\obj\Debug\Granados.pdb
+C:\Users\Lloyd\source\repos\Shell\bin\Debug\Granados.XML
+C:\Users\Lloyd\source\repos\Shell\bin\Debug\Granados.dll
+C:\Users\Lloyd\source\repos\Shell\bin\Debug\Granados.pdb
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.csproj.AssemblyReference.cache
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.strings.resources
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.strings_ja.resources
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.csproj.GenerateResource.cache
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.csproj.CoreCompileInputs.cache
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.dll
+C:\Users\Lloyd\source\repos\Shell\Granados\obj\Debug\Granados.pdb

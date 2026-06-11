@@ -379,7 +379,8 @@
       "xunit.runner.visualstudio/2.5.7": {},
       "CLINETCommands/1.0.0": {
         "dependencies": {
-          "Commands": "1.0.0"
+          "Commands": "1.0.0",
+          "Granados": "1.0.0"
         },
         "runtime": {
           "CLINETCommands.dll": {
@@ -429,6 +430,14 @@
           "Core.dll": {
             "assemblyVersion": "1.8.2.0",
             "fileVersion": "1.8.2.0"
+          }
+        }
+      },
+      "Granados/1.0.0": {
+        "runtime": {
+          "Granados.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.0.0"
           }
         }
       },
@@ -727,6 +736,11 @@
       "sha512": ""
     },
     "Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Granados/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

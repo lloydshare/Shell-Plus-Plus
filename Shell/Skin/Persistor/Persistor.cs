@@ -3,7 +3,8 @@ using CustomForm;
 using Editor.Controls;
 using Microsoft.Win32;
 using System.Reflection;
-
+using CustomForm;
+using Shell;
 #region XML Format
 
 public class settings
@@ -28,6 +29,26 @@ public class settings
         public bool ThemeButton;
         public bool ShowDropShadow;
         public bool RoundedCorners;
+
+        public bool ps;
+        public PS.WDA_ATTRIBUTE ps_attr;
+
+        public bool status_bar;
+
+        //Prompt styling
+        public int prompt_1;
+        public Int16 color_1;
+        public Int16 sep_1;
+        public Int16 color_2;
+        public int prompt_2;
+        public Int16 color_3;
+        public Int16 sep_2;
+        public Int16 color_4;
+        public int prompt_3;
+        public Int16 color_5;
+        public Int16 end_0;
+        public Int16 color_6;
+        ///////////////
     }
 }
 
@@ -109,7 +130,7 @@ public static class Persistor
             }
 
             //get the main form, from the skin manager
-            Skin MainForm = SM.GetMainForm();
+            ShellFrm MainForm = (ShellFrm)SM.GetMainForm();
 
             //set form props
             MainForm.Width = settings.machine.wWidth;
@@ -145,8 +166,25 @@ public static class Persistor
             MainForm.ThemeButton = settings.system.ThemeButton;
             MainForm.ShowDropShadow = settings.system.ShowDropShadow;
             MainForm.RoundedCorners = settings.system.RoundedCorners;
-            
 
+            MainForm.ps_en = settings.system.ps;
+            MainForm.wda_attr = settings.system.ps_attr;
+
+            MainForm.StatusBarEnabled = settings.system.status_bar;
+
+            Shell.Shell.prompt_1 = settings.system.prompt_1;
+            Shell.Shell.prompt_2 = settings.system.prompt_2;
+            Shell.Shell.prompt_3 = settings.system.prompt_3;
+            Shell.Shell.sep_1 = settings.system.sep_1;
+            Shell.Shell.sep_2 = settings.system.sep_2;
+            Shell.Shell.end_0 = settings.system.end_0;
+
+            Shell.Shell.color_1 = settings.system.color_1;
+            Shell.Shell.color_2 = settings.system.color_2;
+            Shell.Shell.color_3 = settings.system.color_3;
+            Shell.Shell.color_4 = settings.system.color_4;
+            Shell.Shell.color_5 = settings.system.color_5;
+            Shell.Shell.color_6 = settings.system.color_6;
 
             //clean-up duplicated resources
             Clean();
@@ -204,6 +242,24 @@ public static class Persistor
 
             // XMLData.machine.LastRun = DateTime.Now;
             XMLData.machine.MachineGuid = GetMachineGuid();
+            XMLData.system.ps = MainForm.ps_en;
+            XMLData.system.ps_attr = MainForm.wda_attr;
+
+            XMLData.system.status_bar = MainForm.StatusBarEnabled;
+
+            XMLData.system.prompt_1 = Shell.Shell.prompt_1;
+            XMLData.system.prompt_2 = Shell.Shell.prompt_2;
+            XMLData.system.prompt_3 = Shell.Shell.prompt_3;
+            XMLData.system.sep_1 = Shell.Shell.sep_1;
+            XMLData.system.sep_2 = Shell.Shell.sep_2;
+            XMLData.system.end_0 = Shell.Shell.end_0;
+
+            XMLData.system.color_1 = Shell.Shell.color_1;
+            XMLData.system.color_2 = Shell.Shell.color_2;
+            XMLData.system.color_3 = Shell.Shell.color_3;
+            XMLData.system.color_4 = Shell.Shell.color_4;
+            XMLData.system.color_5 = Shell.Shell.color_5;
+            XMLData.system.color_6 = Shell.Shell.color_6;
 
             SaveAsXml(XMLData, configFile);
         }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Shell.csproj": {}
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Shell\\Shell.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj": {
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj",
+        "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj",
         "projectName": "CLINETCommands",
-        "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj",
+        "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj",
         "packagesPath": "C:\\Users\\Lloyd\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\obj\\",
+        "outputPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Lloyd\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,11 @@
           "net8.0-windows7.0": {
             "targetAlias": "net8.0-windows7.0",
             "projectReferences": {
-              "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj": {
-                "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj"
+              "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj": {
+                "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj"
+              },
+              "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj": {
+                "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj"
               }
             }
           }
@@ -65,18 +68,18 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj": {
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj",
+        "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj",
         "projectName": "Commands",
-        "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj",
+        "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj",
         "packagesPath": "C:\\Users\\Lloyd\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\obj\\",
+        "outputPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Lloyd\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -93,8 +96,8 @@
           "net8.0-windows7.0": {
             "targetAlias": "net8.0-windows7.0",
             "projectReferences": {
-              "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj": {
-                "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj"
+              "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj"
               }
             }
           }
@@ -193,18 +196,18 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj": {
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj",
+        "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj",
         "projectName": "Core",
-        "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj",
+        "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj",
         "packagesPath": "C:\\Users\\Lloyd\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\obj\\",
+        "outputPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Lloyd\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -299,18 +302,34 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Shell.csproj": {
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj",
+        "projectName": "Granados",
+        "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Granados\\Granados.csproj",
+        "UsingMicrosoftNETSdk": false,
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
+    "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Shell\\Shell.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Shell.csproj",
+        "projectUniqueName": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Shell\\Shell.csproj",
         "projectName": "Shell",
-        "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\Shell.csproj",
+        "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Shell\\Shell.csproj",
         "packagesPath": "C:\\Users\\Lloyd\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Shell\\obj\\",
+        "outputPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Shell\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Lloyd\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -327,14 +346,14 @@
           "net8.0-windows7.0": {
             "targetAlias": "net8.0-windows",
             "projectReferences": {
-              "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj": {
-                "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\CLICommands\\CLINETCommands.csproj"
+              "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj": {
+                "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\CLICommands\\CLINETCommands.csproj"
               },
-              "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj": {
-                "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Commands\\Commands.csproj"
+              "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj": {
+                "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Commands\\Commands.csproj"
               },
-              "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj": {
-                "projectPath": "C:\\Users\\Lloyd\\source\\repos\\Shell\\Core\\Core.csproj"
+              "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj": {
+                "projectPath": "C:\\Users\\Lloyd\\Desktop\\lloydsource\\Shell\\Core\\Core.csproj"
               }
             }
           }
@@ -373,7 +392,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.312/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.313/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
