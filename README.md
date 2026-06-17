@@ -30,7 +30,10 @@ Think of it as a **spiritual successor** to classic Windows command prompts, wit
 - Better tab completion and history
 - Extensible architecture
 - Modern terminal features
-
+- AI agents
+- Native SSH client
+- Cool stuff never seen before
+  
 ---
 
 ## Getting Started
