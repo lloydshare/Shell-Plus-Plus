@@ -32,6 +32,7 @@ Think of it as a **spiritual successor** to classic Windows command prompts, wit
 - Modern terminal features
 - AI agents
 - Native SSH client
+- GNU 
 - Cool stuff never seen before
   
 ---
